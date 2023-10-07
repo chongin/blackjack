@@ -1,0 +1,650 @@
+openapi: 3.0.1
+info:
+  title: BalckJack API
+  version: '1.0'
+paths:
+  /api/tables/{table_name}/query_game:
+    get:
+      summary: "Get player game data from sepcific table"
+      tags:
+        - Query Game Stage
+      parameters:
+        - name: table_name
+          in: path
+          required: true
+          description: "Name of the table to query"
+          schema:
+            type : string
+        - name: player_name
+          in: query
+          required: true
+          description: "Name of the player to query"
+          schema:
+            type : string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/QueryGameResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryGameResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/QueryGameResponse'
+  /api/tables/{table_name}/bet:
+    post:
+      summary: "Player bet money on different bet options on table"
+      tags:
+        - Bet Stage
+      parameters:
+        - name: table_name
+          in: path
+          required: true
+          description: "Name of the table to query"
+          schema:
+            type : string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BetRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/BetRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/BetRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/BetResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BetResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/BetResponse'
+  
+  /api/tables/{table_name}/hit_card:
+    post:
+      summary: "Player hit one more card"
+      tags:
+        - Interaction Stage
+      parameters:
+        - name: table_name
+          in: path
+          required: true
+          description: "Name of the table to query"
+          schema:
+            type : string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HitCardRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/HitCardRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/HitCardRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/HitCardResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HitCardResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/HitCardResponse'
+
+  /api/tables/{table_name}/pass_card:
+    post:
+      summary: "Player pass card"
+      tags:
+        - Interaction Stage
+      parameters:
+        - name: table_name
+          in: path
+          required: true
+          description: "Name of the table to query"
+          schema:
+            type : string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PassCardRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/PassCardRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/PassCardRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/PassCardResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassCardResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/PassCardResponse'
+  /api/notify/bet_started:
+    post:
+      summary: "Notify all players that bet stage started by system, player can bet"
+      tags:
+        - Bet Stage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyBetStartedRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/NotifyBetStartedRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/NotifyBetStartedRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/NotifyBetStartedResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifyBetStartedResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/NotifyBetStartedResponse'
+
+  /api/notify/bet_ended:
+    post:
+      summary: "Notify all players that bet stage ended by system, ready to do deal card"
+      tags:
+        - Bet Stage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyBetEndedRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/NotifyBetEndedRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/NotifyBetEndedRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/NotifyBetEndedResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifyBetEndedResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/NotifyBetEndedResponse'
+
+  /api/notify/deal_started:
+    post:
+      summary: "Notify all players that deal stage started by system, not allow to bet"
+      tags:
+        - Deal Stage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyDealStartedRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/NotifyDealStartedRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/NotifyDealStartedRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/NotifyDealStartedResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifyDealStartedResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/NotifyDealStartedResponse'
+
+  /api/notify/deal_ended:
+    post:
+      summary: "Notify all players that deal stage ended by system, ready to do interaction"
+      tags:
+        - Deal Stage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyDealEndedRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/NotifyDealEndedRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/NotifyDealEndedRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/NotifyDealEndedResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifyDealEndedResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/NotifyDealEndedResponse'
+
+  /api/notify/deal_card:
+    post:
+      summary: "Notify all players the card deal by system"
+      tags:
+        - Deal Stage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyDealCardRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/NotifyDealCardRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/NotifyDealCardRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/NotifyDealCardResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifyDealCardResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/NotifyDealCardResponse'
+
+  /api/notify/result:
+    post:
+      summary: "Notify each players the result of current round and calculate the player game result"
+      tags:
+        - Take Win Stage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyResultRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/NotifyResultRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/NotifyResultRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/NotifyResultResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifyResultResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/NotifyResultResponse'
+
+  /api/notify/game_started:
+     post:
+      summary: "Notify each players the next game started"
+      tags:
+        - Query Game Stage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyGameStartedRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/NotifyGameStartedRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/NotifyGameStartedRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/NotifyGameStartedResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifyGameStartedResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/NotifyGameStartedResponse'
+components:
+  schemas:
+    QueryGameResponse:
+      type: object
+      properties:
+        player_profile:
+           $ref: '#/components/schemas/player_profile'
+        current_round:
+          $ref: '#/components/schemas/round'
+
+    BetRequest:
+      type: object
+      properties:
+        player_id:
+          type: string
+          nullable: false
+        bet_options:
+          type: array
+          items:
+            $ref: '#/components/schemas/bet_option'
+
+    BetResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: false
+        player_profile:
+          $ref: '#/components/schemas/player_profile'
+
+    HitCardRequest:
+      type: object
+      properties:
+        player_id:
+          type: string
+          nullable: false
+
+    HitCardResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: false
+        player_id:
+          type: string
+          nullable: false
+        card:
+          $ref: '#/components/schemas/card'
+    
+    PassCardRequest:
+      type: object
+      properties:
+        player_id:
+          type: string
+          nullable: false
+
+    PassCardResponse:
+      type: object
+      properties:
+        player_id:
+          type: string
+          nullable: false
+        code:
+          type: string
+          nullable: false
+    NotifyDealCardRequest:
+      type: object
+      properties:
+        table_name:
+          type: string
+          nullable: false
+        sent_to:
+          type: string
+          nullable: false
+        card:
+          $ref: '#/components/schemas/card'
+    
+    NotifyDealCardResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: false
+
+    NotifyBetStartedRequest:
+      type: object
+      properties:
+        table_name:
+          type: string
+          nullable: false
+
+    NotifyBetStartedResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: false
+
+    NotifyBetEndedRequest:
+      type: object
+      properties:
+        table_name:
+          type: string
+          nullable: false
+
+    NotifyBetEndedResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: false
+
+    NotifyDealStartedRequest:
+      type: object
+      properties:
+        table_name:
+          type: string
+          nullable: false
+
+    NotifyDealStartedResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: false
+
+    NotifyDealEndedRequest:
+      type: object
+      properties:
+        table_name:
+          type: string
+          nullable: false
+
+    NotifyDealEndedResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: false
+
+    NotifyResultRequest:
+      type: object
+      properties:
+        player_profile:
+          $ref: '#/components/schemas/player_profile'
+        result:
+           $ref: '#/components/schemas/game_result'
+        bet_options:
+          $ref: '#/components/schemas/bet_options'
+    
+    NotifyResultResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: false
+
+    NotifyGameStartedRequest:
+      type: object
+      properties:
+        table_name:
+          type: string
+          nullable: false
+        round:
+           $ref: '#/components/schemas/round'
+    
+    NotifyGameStartedResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: false
+
+    player_profile:
+      type: object
+      properties:
+        player_id:
+          type: string
+          nullable: false
+        player_name:
+          type: string
+          nullable: false
+        balance:
+          type: integer
+          format: int32
+          nullable: false
+
+    round:
+      type: object
+      properties:
+        round_id:
+          type: string
+          nullable: false
+        state:
+          type: string
+          nullable: false
+        player_cards:
+          $ref: '#/components/schemas/deal_cards'
+        banker_cards:
+          $ref: '#/components/schemas/deal_cards'
+        has_black_card:
+          type: boolean
+          nullable: true
+        bet_options:
+          $ref: '#/components/schemas/bet_options'            
+        result:
+          $ref: '#/components/schemas/game_result'       
+        top_winers:
+          type: array
+          nullable: false
+          items:
+            type: object
+            properties:
+              player_name:
+                type: string
+                nullable: false
+              total_win:
+                type: integer
+                format: int32
+                nullable: false
+            
+    game_result:
+      type: object
+      nullable: true
+      properties:
+        winner:
+          type: string
+          nullable: false
+        total_bet:
+          type: integer
+          nullable: false
+          format: int32
+        total_win:
+          type: integer
+          nullable: false
+          format: int32
+    bet_options:
+      type: array
+      items:
+        $ref: '#/components/schemas/bet_option'
+
+    bet_option:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: false
+        bet_amt:
+          type: integer
+          nullable: false
+          format: int32
+        win_amt:
+          type: integer
+          nullable: true
+          format: int32
+    deal_cards:
+      type: object
+      properties:
+        first_two_cards:
+          type: array
+          nullable: false   
+          items:
+            $ref: '#/components/schemas/card'
+        hit_cards:
+          type: array
+          nullable: false   
+          items:
+            $ref: '#/components/schemas/card'
+        total_point:
+          type: integer
+          nullable: false   
+          format: int32
+           
+    card:
+      type: object
+      properties:
+        round_id:
+          type: string
+          nullable: false
+        card_code:
+          type: string
+          nullable: false
+        value:
+          type: string
+          nullable: false
+        suit:
+          type: string
+          nullable: false
+        image_url:
+          type: string
+          nullable: false
+        is_black_card:
+          type: boolean
+          nullable: false
+
