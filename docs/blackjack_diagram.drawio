@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-10-08T01:35:15.825Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="_ni8r6_EA9_iQ1PkWgNf" version="22.0.4" type="device">
+<mxfile host="app.diagrams.net" modified="2023-10-08T02:29:11.421Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="Uxx6870qthJa4GJEXYz_" version="22.0.4" type="device">
   <diagram name="Page-1" id="iNi-rTGCWxGTLk3gbCt8">
     <mxGraphModel dx="2284" dy="765" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -786,7 +786,7 @@
         <mxCell id="1LfN1L5tY23p2y41fCVl-222" value="Hit Card" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="650" y="1770" width="95" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="1LfN1L5tY23p2y41fCVl-224" value="Pass&lt;br&gt;Card" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" parent="1" vertex="1">
+        <mxCell id="1LfN1L5tY23p2y41fCVl-224" value="Stand&lt;br&gt;Card" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="660" y="1950" width="95" height="30" as="geometry" />
         </mxCell>
         <mxCell id="1LfN1L5tY23p2y41fCVl-225" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
