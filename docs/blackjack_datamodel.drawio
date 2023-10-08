@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-10-08T16:31:15.852Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="tymFgLSLOTLiMhXUybSF" version="22.0.4" type="device">
+<mxfile host="app.diagrams.net" modified="2023-10-08T17:57:31.127Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="qkdNGwaNqsXcED7LQ_-l" version="22.0.4" type="device">
   <diagram name="Page-1" id="jfFhxVTObV_eUPiGlczO">
     <mxGraphModel dx="1434" dy="1865" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -112,7 +112,7 @@
         <mxCell id="22vkJat7pSPBPyrB_9X--233" style="edgeStyle=entityRelationEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="22vkJat7pSPBPyrB_9X--4" target="22vkJat7pSPBPyrB_9X--97" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="22vkJat7pSPBPyrB_9X--4" value="Player" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="22vkJat7pSPBPyrB_9X--4" value="PlayerProfile" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="60" y="3190" width="90" height="40" as="geometry" />
         </mxCell>
         <mxCell id="22vkJat7pSPBPyrB_9X--6" value="Deck ID from API Server" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
