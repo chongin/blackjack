@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-
+from message_driver import MessageDriver
 app = Flask(__name__)
 
 
@@ -19,10 +19,12 @@ class HttpServer:
         self.app.run(host=self.host, port=self.port)
 
     def query_game(self, table_name: str) -> str:
-        player_name = request.args.get('player_name')
-        game_data = {
+        message_data = {
+            "action": "query_game",
             "table_name": table_name,
-            "player_name": player_name,
+            "player_name": request.args.get('player_name'),
         }
-        return jsonify(game_data)
+
+        response = MessageDriver(message_data).process_message()
+        return jsonify(response)
 

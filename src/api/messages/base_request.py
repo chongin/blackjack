@@ -1,7 +1,7 @@
-import ulid import ULID
+from ulid import ULID
 
 
-class RequestBase:
+class BaseRequest:
     def __init__(self, action: str) -> None:
         self.action = action
         self.request_id = str(ULID())

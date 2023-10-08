@@ -1,6 +1,6 @@
 from servers.http_server import HttpServer
-from api.message_factory import MessageFactory
-from api.messages.query_game_request import QueryGameRequest
+from message_factory import MessageFactory
+from message_driver import MessageDriver
 
 if __name__ == '__main__':
     MessageFactory.instance().regist_request('query_game')
