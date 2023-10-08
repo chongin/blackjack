@@ -108,9 +108,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/HitCardResponse'
 
-  /api/tables/{table_name}/pass_card:
+  /api/tables/{table_name}/stand_card:
     post:
-      summary: "Player pass card"
+      summary: "Player stand card"
       tags:
         - Interaction Stage
       parameters:
@@ -124,26 +124,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PassCardRequest'
+              $ref: '#/components/schemas/StandCardRequest'
           text/json:
             schema:
-              $ref: '#/components/schemas/PassCardRequest'
+              $ref: '#/components/schemas/StandCardRequest'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/PassCardRequest'
+              $ref: '#/components/schemas/StandCardRequest'
       responses:
         '200':
           description: Success
           content:
             text/plain:
               schema:
-                $ref: '#/components/schemas/PassCardResponse'
+                $ref: '#/components/schemas/StandCardResponse'
             application/json:
               schema:
-                $ref: '#/components/schemas/PassCardResponse'
+                $ref: '#/components/schemas/StandCardResponse'
             text/json:
               schema:
-                $ref: '#/components/schemas/PassCardResponse'
+                $ref: '#/components/schemas/StandCardResponse'
   /api/notify/bet_started:
     post:
       summary: "Notify all players that bet stage started by system, player can bet"
@@ -402,14 +402,14 @@ components:
         card:
           $ref: '#/components/schemas/card'
     
-    PassCardRequest:
+    StandCardRequest:
       type: object
       properties:
         player_id:
           type: string
           nullable: false
 
-    PassCardResponse:
+    StandCardResponse:
       type: object
       properties:
         player_id:
