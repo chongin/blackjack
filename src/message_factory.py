@@ -20,26 +20,23 @@ class MessageFactory:
         return cls._instance
 
     def __init_manual__(self) -> None:
-        self.request_classes = {}
-        self.modules = []
-        message_names = self.find_message_file_name()
+        self.modules = {}
+        message_file_names = self.find_message_file_name()
 
-        for message_name in message_names:
-            module_name = f"api.messages.{message_name}"
-            self.modules.append(import_module(module_name))
-
-    def regist_request(self, name) -> None:
-        self.request_classes[name] = f"{Util.underscore_to_camelcase(name)}Request"
+        for message_file_name in message_file_names:
+            module_name = f"api.messages.{message_file_name}"
+            self.modules[message_file_name] = import_module(module_name)
 
     def create_request(self, name, payload) -> BaseRequest:
-        for module in self.modules:
-            if name in self.request_classes:
+        for message_file_name, module in self.modules.items():
+            if name in message_file_name:
                 try:
-                    class_ = getattr(module, f"{self.request_classes[name]}")
+                    class_name = f"{Util.underscore_to_camelcase(message_file_name)}"
+                    class_ = getattr(module, f"{class_name}")
                     return class_(payload)
                 except AttributeError as ex:
-                    #print(str(ex))
-                    pass
+                    print(str(ex))
+                    break
         raise ValueError(f'Unknow request: {name}')
     
     def find_message_file_name(self) -> List[str]:

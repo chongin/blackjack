@@ -5,6 +5,7 @@ from exceptions.system_exception import *
 from message_factory import MessageFactory
 from api.messages.base_request import BaseRequest
 from controller_factory import ControllerFactory
+from controllers.base_controller import BaseController
 
 class MessageDriver:
     def __init__(self, payload):
@@ -14,8 +15,9 @@ class MessageDriver:
         try:
             request = self._build_message(self.payload)
             controller = self._build_controller(request)
-           # response_hash = controller.handle_request()
+            response_hash = controller.handle_request()
             print(controller)
+            return response_hash
         except SystemException as e:
             return json.dumps(e.to_hash())
         except Exception as e:
@@ -28,5 +30,5 @@ class MessageDriver:
             payload.get('action'), payload
         )
 
-    def _build_controller(self, request):
+    def _build_controller(self, request) -> BaseController:
         return ControllerFactory.instance().create_controller(request)
