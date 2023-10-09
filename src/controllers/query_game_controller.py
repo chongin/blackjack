@@ -7,3 +7,4 @@ class QueryGameController(BaseController):
 
     def handle_request(self) -> dict:
         self.validate_request()
+        return {"test": "success"}

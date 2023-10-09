@@ -40,8 +40,7 @@ class MessageFactory:
         raise ValueError(f'Unknow request: {name}')
     
     def find_message_file_name(self) -> List[str]:
-        current_script_path = os.path.abspath(__file__)
-        current_directory = os.path.dirname(current_script_path)
+        current_directory = Util.get_current_directory_of_file(__file__)
         messages_directory = current_directory + "/api/messages"
         message_files = []
 

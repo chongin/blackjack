@@ -1,5 +1,6 @@
 from data_models.base_model import BaseModel
 
+
 class Wallet:
     def __init__(self, data: dict) -> None:
         self.balance = data['balance']

@@ -43,7 +43,7 @@ class ControllerFactory:
         return ValueError(f'Unknow handler: {request.action}')
     
     def find_controller_file_name(self) -> List[str]:
-        current_directory = Util.get_current_directory_of_file()
+        current_directory = Util.get_current_directory_of_file(__file__)
         controllers_directory = current_directory + "/controllers"
         controller_files = []
 

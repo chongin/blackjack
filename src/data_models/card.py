@@ -20,3 +20,7 @@ class Cards(list):
     def __init__(self, datalist: list) -> None:
         for data in datalist:
             self.append(Card(data))
+
+
+class BalckCard(Card):
+    pass
