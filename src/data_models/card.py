@@ -14,4 +14,9 @@ class Card(BaseModel):
 
     def _compose_image_url(self) -> str:
         return ""
-    
+
+
+class Cards(list):
+    def __init__(self, datalist: list) -> None:
+        for data in datalist:
+            self.append(Card(data))
