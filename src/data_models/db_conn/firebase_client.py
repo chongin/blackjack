@@ -18,7 +18,7 @@ class FirebaseClient:
 
     def __init_manual__(self) -> None:
         database_url = 'https://blackjack-881c3-default-rtdb.firebaseio.com/'
-        service_account_key_path = Util.get_current_directory_of_file()
+        service_account_key_path = Util.get_current_directory_of_file(__file__)
         service_account_key_path += "/service_account_key.json"
         self.cred = credentials.Certificate(service_account_key_path)
         firebase_admin.initialize_app(self.cred, {'databaseURL': database_url})
