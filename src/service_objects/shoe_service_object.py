@@ -4,6 +4,7 @@ from data_models.round import Round
 from api_clients.deck_card_api_client import DeckCardApiClient, DeckDetail
 from ulid import ULID
 
+
 class ShoeServiceObject:
     @classmethod
     def retrieve_shoe_object(cls, name: str) -> 'ShoeServiceObject':

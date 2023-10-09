@@ -50,3 +50,24 @@ class Deck:
 
         self.current_round = Round(data['current_round']) if data.get('current_round') else None
         self.round_histories = RoundHistories(data['round_histories'])
+
+    def to_dict(self) -> dict:
+        deck_hash = {
+            'deck_index': self.deck_index,
+            'shoe_id': self.shoe_id,
+            'deck_api_id': self.deck_api_id,
+            'deal_cards': self.deal_cards.to_list(),
+            'remaind_count_of_cards': self.remaind_count_of_cards,
+            'black_card_postion': self.black_card_postion,
+            'state': self.state,
+            'started_at': self.started_at,
+            'ended_at': self.ended_at,
+        }
+
+        if self.current_round:
+            deck_hash['current_round'] = self.current_round.to_dict()
+
+        if self.round_histories:
+            deck_hash['round_histories'] = self.round_histories.to_list()
+
+        return deck_hash

@@ -10,5 +10,11 @@ class PlayerProfileServiceObject:
 
         return cls(player_profle_db)
     
+    @classmethod
+    def create_player_profile_object(cls, name: str) -> 'PlayerProfileServiceObject':
+        player_profile_db = PlayerProfile.new_model(name)
+
+        return cls(player_profile_db)
+
     def __init__(self, player_profle_db: PlayerProfile) -> None:
-        pass
+        self.player_profile_db = player_profle_db

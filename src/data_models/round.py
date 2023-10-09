@@ -42,3 +42,21 @@ class Round:
         self.ended_at = data['ended_at']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
+
+    def to_dict(self) -> dict:
+        round_hash = {
+            'round_id': self.round_id,
+            'deck_index': self.deck_index,
+            'hand': self.hand,
+            'state': self.state,
+            'player_cards': self.player_cards.to_list(),
+            'banker_cards': self.banker_cards.to_list(),
+            'has_black_card': self.has_black_card,
+            'result': self.result.to_list(),
+            'started_at': self.started_at,
+            'ended_at': self.ended_at,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+        }
+
+        return round_hash
