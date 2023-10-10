@@ -19,14 +19,6 @@ class Wallet:
 
 class PlayerProfile:
     @classmethod
-    def retrieve_by_name(cls, player_name: str) -> 'PlayerProfile':
-        player_profile_hash = FirebaseClient.instance().get_value(f"players/{player_name}")
-        if player_profile_hash is None:
-            return None
-
-        return cls(player_profile_hash)
-    
-    @classmethod
     def new_model(cls, player_name: str) -> 'PlayerProfile':
         player_profile_hash = {
             'player_id': str(ULID()),

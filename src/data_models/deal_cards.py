@@ -20,10 +20,7 @@ class DealCards(list):
             self.append(DealCard(deal_card_data))
     
     def to_list(self) -> list:
-        card_list = []
-        for deal_card in self:
-            card_list.append(deal_card.to_dict())
-        return card_list
+        return [item.to_dict() for item in self]
 
 
 class PlayerCards(DealCards):
