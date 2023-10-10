@@ -47,7 +47,7 @@ class Deck:
         self.started_at = data['started_at']
         self.ended_at = data.get('ended_at')
 
-        self.current_round = Round(data['current_round'])
+        self.current_round = Round(data['current_round']) if data.get('current_round') else None #should check it
         self.round_histories = RoundHistories(data['round_histories']) if data.get('round_histories') else RoundHistories([])
 
     def to_dict(self) -> dict:
