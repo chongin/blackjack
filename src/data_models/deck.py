@@ -37,19 +37,18 @@ class Deck:
         return random_number
     
     def __init__(self, data: dict) -> None:
-        print(f"deck........ {data}")
         self.deck_index = data['deck_index']
         self.shoe_id = data['shoe_id']
         self.deck_api_id = data['deck_api_id']
-        self.deal_cards = Cards(data['deal_cards'])
+        self.deal_cards = Cards(data['deal_cards']) if data.get('deal_cards') else Cards([])
         self.remaind_count_of_cards = data['remaind_count_of_cards']
         self.black_card_postion = data['black_card_postion']
         self.state = data['state']
         self.started_at = data['started_at']
-        self.ended_at = data['ended_at']
+        self.ended_at = data.get('ended_at')
 
-        self.current_round = Round(data['current_round']) if data.get('current_round') else None
-        self.round_histories = RoundHistories(data['round_histories'])
+        self.current_round = Round(data['current_round'])
+        self.round_histories = RoundHistories(data['round_histories']) if data.get('round_histories') else RoundHistories([])
 
     def to_dict(self) -> dict:
         deck_hash = {

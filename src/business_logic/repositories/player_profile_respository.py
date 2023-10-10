@@ -23,7 +23,6 @@ class PlayerProfileRespository:
         
         all_player_profiles = [PlayerProfile(data) for data in all_player_profile_dict.values()]
         sorted_profiles = sorted(all_player_profiles, key=lambda profile: profile.wallet.total_win, reverse=True)
-
         top_winners = sorted_profiles[:top_N]
         return top_winners
     

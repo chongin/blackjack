@@ -34,12 +34,12 @@ class Round:
         self.deck_index = data['deck_index']
         self.hand = data['hand']
         self.state = data['state']
-        self.player_cards = PlayerCards(data['player_cards'])
-        self.banker_cards = BankerCards(data['banker_cards'])
+        self.player_cards = PlayerCards(data['player_cards']) if data.get('player_cards') else PlayerCards([])
+        self.banker_cards = BankerCards(data['banker_cards']) if data.get('banker_cards') else BankerCards([])
         self.has_black_card = data['has_black_card']
-        self.result = Result(data['result'])
-        self.started_at = data['started_at']
-        self.ended_at = data['ended_at']
+        self.result = Result(data['result']) if data.get('result') else Result([])
+        self.started_at = data.get('started_at')
+        self.ended_at = data.get('ended_at')
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
 

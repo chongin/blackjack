@@ -1,7 +1,7 @@
 from data_models.player_profile import PlayerProfile
 
 
-class TopWinerDTO:
+class TopWinnerDTO:
     @classmethod
     def from_data_model(cls, player_profile: PlayerProfile) -> 'PlayerProfileDTO':
         return cls(
@@ -16,7 +16,7 @@ class TopWinerDTO:
         self.total_win = total_win
 
     def to_dict(self) -> dict:
-        {
+        return {
             'player_id': self.player_id,
             'player_name': self.player_name,
             'total_win': self.total_win
@@ -26,13 +26,14 @@ class TopWinerDTO:
 class TopWinnersDTO(list):
     @classmethod
     def from_data_model(cls, top_winners: list[PlayerProfile]) -> 'ResultDTO':
-        return cls(
+        r = cls(
             datalist=top_winners,
         )
+        return r
 
     def __init__(self, datalist: list[PlayerProfile]) -> None:
         for data in datalist:
-            self.append(TopWinerDTO.from_data_model(data))
+            self.append(TopWinnerDTO.from_data_model(data))
 
     def to_list(self) -> list[dict]:
         return [item.to_dict() for item in self]
