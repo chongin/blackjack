@@ -3,13 +3,12 @@ from api.messages.components.bet_option_req import BetOptionsReq
 from exceptions.system_exception import ParameterWrongException
 
 
-class BetRequest(BaseRequest):
+class HitRequest(BaseRequest):
     def __init__(self, data: dict) -> None:
         self.table_name = data.get('table_name')
         self.player_name = data.get('player_name')
         self.round_id = data.get('round_id')
-        self.bet_options = BetOptionsReq(data.get('bet_options')) if data.get('bet_options') else BetOptionsReq([])
-        action_name = 'bet'
+        action_name = 'hit'
         super().__init__(action_name)
 
     def validate(self) -> bool:
@@ -19,5 +18,4 @@ class BetRequest(BaseRequest):
             raise ParameterWrongException("Player name was missed!")
         if not self.round_id:
             raise ParameterWrongException("Round ID was missed!")
-        self.bet_options.validate()
         return True

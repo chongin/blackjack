@@ -6,7 +6,15 @@ from utils.util import Util
 
 class RoundState:
     def __init__(self, state) -> None:
-        pass
+        self.states = {
+            "opened": 1,
+            "bet_started": 2,
+            "bet_ended": 3,
+            "deal_started": 4,
+            "deal_ended": 5,
+            "resulted": 6,
+            "closed": 7
+        }
 
 
 class Round:
@@ -62,9 +70,10 @@ class Round:
         return round_hash
     
     def can_bet(self) -> bool:
-        if self.state == 'opened' or self.state == 'bet_started':
-            return True
-        return False
+        return self.state == 'opened' or self.state == 'bet_started'
+
+    def can_interaction(self) -> bool:
+        return self.state == 'deal_ended'
     
     def find_player_result_by_id(self, player_id: str) -> PlayerResult:
         return self.result.get_player_result_by_id(player_id)
