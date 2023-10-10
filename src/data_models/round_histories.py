@@ -7,7 +7,4 @@ class RoundHistories(list):
             self.append(Round(data))
 
     def to_list(self) -> list:
-        round_list = []
-        for round in self:
-            round_list.append(round.to_dict())
-        return round_list
+        return [item.to_dict() for item in self]

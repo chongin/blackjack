@@ -1,5 +1,5 @@
 from data_models.deal_cards import PlayerCards, BankerCards
-from data_models.result import Result
+from data_models.result import Result, PlayerResult
 from ulid import ULID
 from utils.util import Util
 
@@ -60,3 +60,11 @@ class Round:
         }
 
         return round_hash
+    
+    def can_bet(self) -> bool:
+        if self.state == 'opened' or self.state == 'bet_started':
+            return True
+        return False
+    
+    def find_player_result_by_id(self, player_id: str) -> PlayerResult:
+        return self.result.get_player_result_by_id(player_id)

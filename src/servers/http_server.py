@@ -12,13 +12,17 @@ class HttpServer:
 
     def setup_routes(self) -> None:
         self.app.route('/api/tables/<table_name>/query_game', methods=["GET"])(
-            self.query_game
+            self.handle_query_game
+        )
+
+        self.app.route('/api/tables/<table_name>/players/<player_name>/bet', methods=["POST"])(
+            self.handle_bet
         )
 
     def run(self) -> None:
         self.app.run(host=self.host, port=self.port)
 
-    def query_game(self, table_name: str) -> str:
+    def handle_query_game(self, table_name: str) -> str:
         message_data = {
             "action": "query_game",
             "table_name": table_name,
@@ -28,3 +32,15 @@ class HttpServer:
         response = MessageDriver(message_data).process_message()
         return jsonify(response)
 
+    def handle_bet(self, table_name: str, player_name: str) -> str:
+        data = request.get_json()
+        message_data = {
+            "action": "bet",
+            "table_name": table_name,
+            "player_name": player_name,
+            "round_id": data.get('round_id'),
+            "bet_options": data.get('bet_options')
+        }
+
+        response = MessageDriver(message_data).process_message()
+        return jsonify(response)

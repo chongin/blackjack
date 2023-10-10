@@ -1,4 +1,5 @@
 from ulid import ULID
+from abc import ABC, abstractmethod
 
 
 class BaseRequest:
@@ -11,3 +12,7 @@ class BaseRequest:
             "action": self.action,
             "request_id": self.request_id
         }
+
+    @abstractmethod
+    def validate() -> bool:
+        pass

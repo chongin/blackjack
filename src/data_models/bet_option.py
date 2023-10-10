@@ -2,7 +2,7 @@ class BetOption:
     def __init__(self, data: dict) -> None:
         self.option_name = data['option_name']
         self.bet_amt = data['bet_amt']
-        self.win_amt = data['win_amt']
+        self.win_amt = data.get('win_amt')
 
     def to_dict(self) -> dict:
         bet_option_data = {
@@ -19,7 +19,4 @@ class BetOptions(list):
             self.append(BetOption(data))
 
     def to_list(self) -> list:
-        bet_options_list = []
-        for bet_option in self:
-            bet_options_list.append(bet_option.to_dict())
-        return bet_options_list
+        return [item.to_dict() for item in self]

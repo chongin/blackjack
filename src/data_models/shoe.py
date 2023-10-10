@@ -17,6 +17,7 @@ class ShoeConfig:
             'player_mode': self.player_mode,
         }
 
+
 class Shoe:
     @classmethod
     def retrieve_by_name(cls, shoe_name: str) -> 'Shoe':
@@ -68,6 +69,3 @@ class Shoe:
             shoe_hash['current_deck'] = self.current_deck.to_dict()
 
         return shoe_hash
-    
-    def save(self):
-        pass

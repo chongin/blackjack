@@ -2,6 +2,7 @@ from data_models.bet_option import BetOption, BetOptions
 
 
 class BetOptionDTO:
+    @classmethod
     def from_data_model(cls, bet_option: BetOption) -> 'BetOptionDTO':
         return cls(
             option_name=bet_option.option_name,

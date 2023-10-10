@@ -24,11 +24,8 @@ class Cards(list):
             self.append(Card(data))
 
     def to_list(self) -> list:
-        card_list = []
-        for card in self:
-            card_list.append(card.to_dict())
-        return card_list
-    
+        return [item.to_dict() for item in self]
+
 
 class BalckCard(Card):
     pass

@@ -1,5 +1,6 @@
 import requests
 
+
 class ApiClientBase:
     def __init__(self, endpoint, timeout=10):
         self.endpoint = endpoint

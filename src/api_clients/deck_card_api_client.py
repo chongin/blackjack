@@ -18,7 +18,7 @@ class CardDetail:
         self.suit = card_data.get('suit', '')
 
 
-enable_mock = False
+enable_mock = True
 class DeckCardApiClient(ApiClientBase):
     def __init__(self, endpoint='https://www.deckofcardsapi.com', timeout=10) -> None:
         super().__init__(endpoint, timeout)

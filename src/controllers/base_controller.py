@@ -8,6 +8,6 @@ class BaseController:
     @abstractmethod
     def handle_request(self) -> dict:
         pass
-    
+
     def validate_request(self) -> bool:
-        return True
+        return self.request.validate()

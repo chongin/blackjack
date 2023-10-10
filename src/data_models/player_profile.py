@@ -48,6 +48,12 @@ class PlayerProfile:
         }
         return player_profile_dict
 
+    def deduct_balance(self, amt):
+        self.wallet.balance -= amt
+
+    def increase_balance(self, amt):
+        self.wallet.balance += amt
+
 
 class PlayerProfiles(list):
     def __init__(self, datalist: list):
@@ -55,7 +61,4 @@ class PlayerProfiles(list):
             self.append(PlayerProfile(data))
 
     def to_list(self) -> list:
-        player_profile_list = []
-        for player_profile in self:
-            player_profile_list.append(player_profile.to_dict())
-        return player_profile_list
+        return [item.to_dict() for item in self]
