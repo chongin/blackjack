@@ -11,16 +11,18 @@ class CurrentRoundDTO:
         return cls(
             round_id=round.round_id,
             state=round.state,
+            hand=round.hand,
             player_cards=round.player_cards,
             banker_cards=round.banker_cards,
             result=round.result,
             has_black_card=round.has_black_card
         )
 
-    def __init__(self, round_id: str, state: str, player_cards: PlayerCards,
+    def __init__(self, round_id: str, state: str, hand: int, player_cards: PlayerCards,
                  banker_cards: BankerCards, result: Result, has_black_card: bool) -> None:
         self.round_id = round_id
         self.state = state
+        self.hand = hand
         self.player_cards = DealCardsDto.from_data_model(player_cards)
         self.banker_cards = DealCardsDto.from_data_model(banker_cards)
         self.result = ResultDTO.from_data_model(result)
@@ -30,6 +32,7 @@ class CurrentRoundDTO:
         return {
             "round_id": self.round_id,
             "state": self.state,
+            "hand": self.hand,
             "player_cards": self.player_cards.to_list(),
             "banker_cards": self.banker_cards.to_list(),
             "result": self.result.to_list(),
