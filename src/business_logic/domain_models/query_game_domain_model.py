@@ -8,17 +8,17 @@ class QueryGameDomainModel:
     def __init__(self, shoe: Shoe, player_profile: PlayerProfile, top_winners: list[PlayerProfile]) -> None:
         self.table_name = shoe.shoe_name
         self.config = shoe.config.to_dict()
-        self.player_profile = PlayerProfileDTO.from_data_model(player_profile)
-        self.current_round = CurrentRoundDTO.from_data_model(shoe.current_deck.current_round)
+        self.player_profile_dto = PlayerProfileDTO.from_data_model(player_profile)
+        self.current_round_dto = CurrentRoundDTO.from_data_model(shoe.current_deck.current_round)
         # it is important to filter current player data
-        self.current_round.filter_by_player_id(self.player_profile.player_id)
-        self.top_winners = TopWinnersDTO.from_data_model(top_winners)
+        self.current_round_dto.filter_by_player_id(self.player_profile_dto.player_id)
+        self.top_winners_dto = TopWinnersDTO.from_data_model(top_winners)
 
     def to_dict(self) -> dict:
         return {
             "table_name": self.table_name,
             "config": self.config,
-            "player_profile": self.player_profile.to_dict(),
-            "top_winners": self.top_winners.to_list(),
-            "current_round": self.current_round.to_dict()
+            "player_profile": self.player_profile_dto.to_dict(),
+            "top_winners": self.top_winners_dto.to_list(),
+            "current_round": self.current_round_dto.to_dict()
         }

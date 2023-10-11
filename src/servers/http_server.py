@@ -19,6 +19,10 @@ class HttpServer:
             self.handle_bet
         )
 
+        self.app.route('/api/tables/<table_name>/players/<player_name>/hit', methods=["POST"])(
+            self.handle_hit
+        )
+
     def run(self) -> None:
         self.app.run(host=self.host, port=self.port)
 
@@ -40,6 +44,18 @@ class HttpServer:
             "player_name": player_name,
             "round_id": data.get('round_id'),
             "bet_options": data.get('bet_options')
+        }
+
+        response = MessageDriver(message_data).process_message()
+        return jsonify(response)
+    
+    def handle_hit(self, table_name: str, player_name: str) -> str:
+        data = request.get_json()
+        message_data = {
+            "action": "hit",
+            "table_name": table_name,
+            "player_name": player_name,
+            "round_id": data.get('round_id')
         }
 
         response = MessageDriver(message_data).process_message()

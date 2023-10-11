@@ -73,7 +73,7 @@ class Round:
         return self.state == 'opened' or self.state == 'bet_started'
 
     def can_interaction(self) -> bool:
-        return self.state == 'deal_ended'
+        return self.state == 'deal_ended' or self.state == 'opened' # need change
     
     def find_player_game_info_by_player_id(self, player_id: str) -> PlayerGameInfo:
         for player_game_info in self.player_game_infos:
