@@ -1,6 +1,6 @@
 from data_models.round import Round
 from data_models.player_game_infos import PlayerGameInfos, BankerGameInfo
-from business_logic.domain_models.player_game_info_dto import PlayerGameInfosDTO, BankerGameInfoDTO
+from business_logic.domain_models.DTOs.player_game_info_dto import PlayerGameInfosDTO, BankerGameInfoDTO
 
 class CurrentRoundDTO:
     @classmethod

@@ -1,8 +1,8 @@
 from data_models.shoe import Shoe
 from data_models.player_profile import PlayerProfile
-from business_logic.domain_models.player_profile_dto import PlayerProfileDTO
-from business_logic.domain_models.top_winer_dto import TopWinnersDTO
-from business_logic.domain_models.current_round_dto import CurrentRoundDTO
+from business_logic.domain_models.DTOs.player_profile_dto import PlayerProfileDTO
+from business_logic.domain_models.DTOs.top_winer_dto import TopWinnersDTO
+from business_logic.domain_models.DTOs.current_round_dto import CurrentRoundDTO
 
 
 class BetDomainModel:
