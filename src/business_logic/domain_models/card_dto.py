@@ -1,9 +1,9 @@
 from data_models.card import Card, Cards
 
 
-class CardDto:
+class CardDTO:
     @classmethod
-    def from_data_model(cls, card: Card) -> 'CardDto':
+    def from_data_model(cls, card: Card) -> 'CardDTO':
         return cls(
             card_code=card.player_id,
             suit=card.player_name,
@@ -37,7 +37,7 @@ class CardsDto(list):
 
     def __init__(self, datalist: list[Card]) -> None:
         for data in datalist:
-            self.append(CardDto.from_data_model(data))
+            self.append(CardDTO.from_data_model(data))
 
     def to_list(self) -> list[dict]:
         return [item.to_dict() for item in self]

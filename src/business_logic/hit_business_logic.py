@@ -2,7 +2,7 @@ from business_logic.repositories.shoe_respository import ShoeRepository
 from business_logic.repositories.player_profile_respository import PlayerProfileRespository
 from business_logic.domain_models.hit_domain_model import HitDomainModel
 from api.messages.components.bet_option_req import BetOptionsReq
-from data_models.round import Round, Result, PlayerResult
+from data_models.round import Round, Result, PlayerGameInfo
 from data_models.bet_option import BetOption, BetOptions
 
 from exceptions.system_exception import *

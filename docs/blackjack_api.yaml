@@ -549,9 +549,9 @@ components:
         state:
           type: string
           nullable: false
-        player_cards:
+        player_game_infos:
           $ref: '#/components/schemas/deal_cards'
-        banker_cards:
+        banker_game_info:
           $ref: '#/components/schemas/deal_cards'
         has_black_card:
           type: boolean

@@ -2,7 +2,7 @@ from business_logic.repositories.shoe_respository import ShoeRepository
 from business_logic.repositories.player_profile_respository import PlayerProfileRespository
 from business_logic.domain_models.bet_domain_model import BetDomainModel
 from api.messages.components.bet_option_req import BetOptionsReq
-from data_models.round import Round, Result, PlayerResult
+from data_models.round import PlayerGameInfo
 from data_models.bet_option import BetOption, BetOptions
 
 from exceptions.system_exception import *
@@ -43,15 +43,19 @@ class BetBusinessLogic:
                 "bet_amt": bet_option_req.bet_amt
             }))
 
-        player_result_dm = current_round_dm.find_player_result_by_id(player_profile_dm.player_id)
-        if player_result_dm is None:
-            player_result_dm = PlayerResult({
+        player_game_info_dm = current_round_dm.find_player_game_info_by_player_id(player_profile_dm.player_id)
+        if player_game_info_dm is None:
+            player_game_info_dm = PlayerGameInfo({
                 "player_id": player_profile_dm.player_id,
-                "bet_options": bet_options_dm.to_list()
+                "bet_options": bet_options_dm.to_list(),
+                "first_two_cards": [],
+                "hit_cards": [],
+                "is_stand": False
             })
-            current_round_dm.result.append(player_result_dm)
+            current_round_dm.player_game_infos.append(player_game_info_dm)
         else:
-            player_result_dm.add_player_bet_options(bet_options_dm)
+            for bet_option_dm in bet_options_dm:
+                player_game_info_dm.bet_options.append(bet_option_dm)
 
         # calculate player balance
         player_profile_dm.deduct_balance(total_bet_amt)
@@ -60,5 +64,5 @@ class BetBusinessLogic:
         self.shoe_repository.save_shoe(shoe_dm)
         self.player_profile_respository.save_player(player_profile_dm)
 
-        #conver data to client
+        # conver data to client
         return BetDomainModel(shoe_dm, player_profile_dm).to_dict()

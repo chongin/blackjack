@@ -13,15 +13,14 @@ class QueryGameBusinessLogic:
         shoe_dm = self.shoe_repository.retrieve_shoe_model(shoe_name)
         if shoe_dm is None:
             shoe_dm = self.shoe_repository.create_shoe_model(shoe_name, 8)
+             # save data to db (how to use transaction?)
+            self.shoe_repository.save_shoe(shoe_dm)
             
         player_profile_dm = self.player_profile_respository.retrieve_player_profile_model(player_name)
         if player_profile_dm is None:
             player_profile_dm = self.player_profile_respository.create_player_profile_model(player_name)
-            
-        # save data to db (how to use transaction?)
-        self.shoe_repository.save_shoe(shoe_dm)
-        self.player_profile_respository.save_player(player_profile_dm)
-
+            self.player_profile_respository.save_player(player_profile_dm)
+       
         # conver data to client
         top_winers_dm = self.player_profile_respository.retrieve_top_winners(5)
 

@@ -1,39 +1,29 @@
 from data_models.round import Round
-from data_models.deal_cards import PlayerCards, BankerCards
-from data_models.result import Result
-from business_logic.domain_models.deal_cards_dto import DealCardsDto, DealCardDto
-from business_logic.domain_models.result_dto import ResultDTO, PlayerResultDTO
-
+from data_models.player_game_infos import PlayerGameInfos, BankerGameInfo
+from business_logic.domain_models.player_game_info_dto import PlayerGameInfosDTO, BankerGameInfoDTO
 
 class CurrentRoundDTO:
     @classmethod
     def from_data_model(cls, round: Round) -> 'CurrentRoundDTO':
-        return cls(
-            round_id=round.round_id,
-            state=round.state,
-            hand=round.hand,
-            player_cards=round.player_cards,
-            banker_cards=round.banker_cards,
-            result=round.result,
-            has_black_card=round.has_black_card
-        )
+        return cls(round)
 
-    def __init__(self, round_id: str, state: str, hand: int, player_cards: PlayerCards,
-                 banker_cards: BankerCards, result: Result, has_black_card: bool) -> None:
-        self.round_id = round_id
-        self.state = state
-        self.hand = hand
-        self.player_cards = DealCardsDto.from_data_model(player_cards)
-        self.banker_cards = DealCardsDto.from_data_model(banker_cards)
+    def __init__(self, round: Round) -> None:
+        self.round_id = round.round_id
+        self.state = round.state
+        self.hand = round.hand
+        self.player_game_infos = PlayerGameInfosDTO.from_data_model(round.player_game_infos)
+        if type(round.banker_game_info) is dict:
+            self.banker_game_info = {}
+        else:
+            self.banker_game_info = BankerGameInfoDTO.from_data_model(round.banker_game_info)
 
         # only have one banker, so change it to dict
-        if len(self.banker_cards) > 0:
-            self.banker_cards = self.banker_cards[0]
+        if len(self.banker_game_info) > 0:
+            self.banker_game_info = self.banker_game_info[0]
         else:
-            self.banker_cards = {}
+            self.banker_game_info = {}
 
-        self.result = ResultDTO.from_data_model(result)
-        self.has_black_card = has_black_card
+        self.has_black_card = round.has_black_card
 
     def to_dict(self) -> dict:
         hash = {
@@ -44,43 +34,22 @@ class CurrentRoundDTO:
         }
 
         # it should be call filter_by_player_id first.
-        if len(self.player_cards) > 0:
-            hash["player_cards"] = self.player_cards.to_dict()
+        if type(self.player_game_infos) is dict:
+            hash["player_game_infos"] = {}
         else:
-            hash["player_cards"] = {}
+            hash["player_game_infos"] = self.player_game_infos.to_dict()
         
-         # it should be call filter_by_player_id first.
-        if len(self.banker_cards) > 0:
-            hash["banker_cards"] = self.player_cards.to_dict()
-        else:
-            hash["banker_cards"] = {}
-
         # it should be call filter_by_player_id first.
-        if type(self.result) is not dict:
-            print(f"33333333333333 {self.player_cards}, {type(self.result)}")
-            hash["result"] = self.result.to_dict()
+        if type(self.banker_game_info) is dict:
+            hash["banker_game_info"] = {}
         else:
-            hash["result"] = {}
+            hash["banker_game_info"] = self.banker_game_info.to_dict()
 
         return hash
 
-    def filter_by_player_id(self, player_id: str):
-        self.player_cards = self._filter_player_cards(player_id)
-        if self.player_cards is None:
-            self.player_cards = {}
-        
-        self.result = self._filter_result(player_id)
-        if self.result is None:
-            self.result = {}
-        
-    def _filter_player_cards(self, player_id: str):
-        for deal_card_dto in self.player_cards:
-            if deal_card_dto.player_id == player_id:
-                return deal_card_dto
-        return None
-    
-    def _filter_result(self, player_id: str):
-        for player_result_dto in self.result:
-            if player_result_dto.player_id == player_id:
-                return player_result_dto
-        return None
+    def filter_by_player_id(self, player_id: str) -> None:
+        for player_game_info in self.player_game_infos:
+            if player_game_info.player_id == player_id:
+                self.player_game_infos = player_game_info
+                return
+        self.player_game_infos = {}

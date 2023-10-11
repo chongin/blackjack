@@ -10,7 +10,7 @@ class BetDomainModel:
         self.table_name = shoe.shoe_name
         self.player_profile = PlayerProfileDTO.from_data_model(player_profile)
         self.current_round = CurrentRoundDTO.from_data_model(shoe.current_deck.current_round)
-        
+        self.current_round.filter_by_player_id(self.player_profile.player_id)
 
     def to_dict(self) -> dict:
         return {
