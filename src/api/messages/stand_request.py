@@ -2,12 +2,12 @@ from api.messages.base_request import BaseRequest
 from exceptions.system_exception import ParameterWrongException
 
 
-class HitRequest(BaseRequest):
+class StandRequest(BaseRequest):
     def __init__(self, data: dict) -> None:
         self.table_name = data.get('table_name')
         self.player_name = data.get('player_name')
         self.round_id = data.get('round_id')
-        action_name = 'hit'
+        action_name = 'stand'
         super().__init__(action_name)
 
     def validate(self) -> bool:
