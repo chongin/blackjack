@@ -16,23 +16,23 @@ class HitBusinessLogic:
         AuthorizationApiClient().validate_player({'player_name': player_name})
 
         # do validation
-        shoe_dm = self.shoe_repository.retrieve_shoe_model(shoe_name)
-        if shoe_dm is None:
+        shoe = self.shoe_repository.retrieve_shoe_model(shoe_name)
+        if shoe is None:
             raise TableNotFoundException(f"Cannot find this table: {shoe_name}")
         
-        player_profile_dm = self.player_profile_respository.retrieve_player_profile_model(player_name)
-        if player_profile_dm is None:
+        player_profile = self.player_profile_respository.retrieve_player_profile_model(player_name)
+        if player_profile is None:
             raise PlayerNotFoundException(f"Cannot find this player: {player_name}")
         
-        current_round_dm = shoe_dm.current_deck.current_round
-        if current_round_dm.round_id != round_id:
+        current_round = shoe.current_deck.current_round
+        if current_round.round_id != round_id:
             raise RoundNotFoundException(f"Round id: {round_id} is not matched current round. ")
         
-        if not current_round_dm.can_interaction():
-            raise BetNotAllowException(f"You cannot hit in this state of this Round id: {round_id}, state: {current_round_dm.state}")
+        if not current_round.can_interaction():
+            raise BetNotAllowException(f"You cannot hit in this state of this Round id: {round_id}, state: {current_round.state}")
         
         #need to check player already stand or not
         
 
         #conver data to client
-        return HitDomainModel(shoe_dm, player_profile_dm).to_dict()
+        return HitDomainModel(shoe, player_profile).to_dict()

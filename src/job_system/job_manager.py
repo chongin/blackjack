@@ -27,14 +27,26 @@ class JobManager:
         self.mutex = threading.Lock()
         pass
     
-    def add_job(self, job_type: str, job_data: dict) -> bool:
+    def add_notify_bet_ended_job(self, job_data: dict) -> bool:
+        print('add_notify_bet_ended_job', job_data)
+        return self._add_job('NotifyBetEnded', job_data)
+    
+    def add_notify_closed_job(self, job_data: dict) -> bool:
+        print('add_notify_closed_job', job_data)
+        return self._add_job('NotifyClosedEnded', job_data)
+
+    def add_notify_nex_round_opened_job(self, job_data: dict) -> bool:
+        print('add_notify_nex_round_opened_job', job_data)
+        return self._add_job('NotifyNextRoundOpened', job_data)
+    
+    def _add_job(self, job_type: str, job_data: dict) -> bool:
         job = None
         if job_type == 'NotifyBetEnded':
             job = NotifyBetEndedJob(job_data)
         elif job_type == 'NotifyClosedEnded':
             job = NotifyClosedEndedJob(job_data)
-        elif job_type == 'NotifyNextRoundStarted':
-            job = NotifyNextRoundStartedJob(job_data)
+        elif job_type == 'NotifyNextRoundOpened':
+            job = NotifyNextRoundOpened(job_data)
         else:
             raise NotFoundException(f"Cannot find this job type: {job_type}")
         
@@ -49,7 +61,7 @@ class JobManager:
     
     def start_timer(self):
         self.timer_task = concurrent.futures.ThreadPoolExecutor(max_workers=1)
-        self.timer_task.submit(self.execute_timer)
+        # self.timer_task.submit(self.execute_timer)
         
     def execute_timer(self):
         while self.running():

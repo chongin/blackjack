@@ -54,7 +54,15 @@ class Shoe:
         self.deck_api_id = data['deck_api_id']
         self.state = data['state']
         self.current_deck = Deck(data['current_deck']) if data.get('current_deck') else None
+        if self.current_deck is not None:
+            self.current_deck.set_parent(self)
 
+    def notify_info(self) -> dict:
+        return {
+            'shoe_id': self.shoe_id,
+            'shoe_name': self.shoe_name
+        }
+    
     def to_dict(self) -> dict:
         shoe_hash = {
             'shoe_id': self.shoe_id,

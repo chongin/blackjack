@@ -18,24 +18,27 @@ class ShoeRepository:
     def create_shoe_model(self, shoe_name: str, number_of_decks: int = 8) -> Shoe:
         deck_detail = DeckCardApiClient().create_new_deck(number_of_decks)
         print(f"create new deck: {deck_detail}")
-        shoe_dm = Shoe.new_model(
+        shoe = Shoe.new_model(
             shoe_name, deck_detail.deck_api_id,
             number_of_decks
         )
 
-        deck_dm = Deck.new_model(
-            shoe_dm.shoe_id,
-            shoe_dm.shuffer_count,
+        deck = Deck.new_model(
+            shoe.shoe_id,
+            shoe.shuffer_count,
             deck_detail.deck_api_id,
             deck_detail.remain_card_count
         )
 
-        round_dm = Round.new_model(deck_dm.deck_index)
-        deck_dm.current_round = round_dm
-        shoe_dm.current_deck = deck_dm
+        round = Round.new_model(deck.deck_index)
+        round.set_parent(deck)
 
-        return shoe_dm
-    
+        deck.current_round = round
+        deck.set_parent(shoe)
+
+        shoe.current_deck = deck
+        return shoe
+ 
     def save_shoe(self, shoe: Shoe) -> bool:
         FirebaseClient.instance().set_value(f"shoes/{shoe.shoe_name}", shoe.to_dict())
         print("save shoe success")

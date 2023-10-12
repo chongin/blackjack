@@ -4,16 +4,13 @@ from utils.util import Util
 
 
 class RoundState:
-    def __init__(self, state) -> None:
-        self.states = {
-            "opened": 1,
-            "bet_started": 2,
-            "bet_ended": 3,
-            "deal_started": 4,
-            "deal_ended": 5,
-            "resulted": 6,
-            "closed": 7
-        }
+    OPENED = "opened"
+    BET_STARTED = "bet_started"
+    BET_ENDED = "bet_ended"
+    DEAL_STARTED = "deal_started"
+    DEAL_ENDED = "deal_ended"
+    RESULTED = "resulted"
+    CLOSED = "closed"
 
 
 class Round:
@@ -23,7 +20,7 @@ class Round:
             'round_id': str(ULID()),
             'deck_index': deck_index,
             'hand': 0,
-            'state': 'opened',
+            'state': RoundState.OPENED,
             'player_game_infos': [],
             'banker_game_info': [],
             'has_black_card': False,
@@ -49,6 +46,10 @@ class Round:
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
 
+    # when init data, should set parent object here
+    def set_parent(self, deck: any) -> None:
+        self.deck = deck
+
     def to_dict(self) -> dict:
         round_hash = {
             'round_id': self.round_id,
@@ -69,14 +70,67 @@ class Round:
             round_hash['banker_game_info'] = self.banker_game_info.to_dict()
         return round_hash
     
-    def can_bet(self) -> bool:
-        return self.state == 'opened' or self.state == 'bet_started'
-
-    def can_interaction(self) -> bool:
-        return self.state == 'deal_ended' or self.state == 'opened' # need change
-    
     def find_player_game_info_by_player_id(self, player_id: str) -> PlayerGameInfo:
         for player_game_info in self.player_game_infos:
             if player_game_info.player_id == player_id:
                 return player_game_info
         return None
+
+    def notify_info(self) -> dict:
+        info = {
+            'round_id': self.round_id,
+            'deck_index': self.deck_index,
+            'hand': self.hand,
+            'state': self.state,
+            'started_at': self.started_at,
+            'ended_at': self.ended_at,
+            'updated_at': self.updated_at,
+        }
+
+        info.update(self.deck.shoe.notify_info())
+        return info
+    
+    def can_bet(self) -> bool:
+        return self.state == RoundState.OPENED or self.state == RoundState.BET_STARTED
+
+    def can_interaction(self) -> bool:
+        return self.state == RoundState.DEAL_ENDED or self.state == RoundState.OPENED # need change
+    
+    def is_opened(self) -> bool:
+        return self.state == RoundState.OPENED
+    
+    def is_bet_started(self) -> bool:
+        return self.state == RoundState.BET_STARTED
+    
+    def is_bet_ended(self) -> bool:
+        return self.state == RoundState.BET_ENDED
+    
+    def is_deal_started(self) -> bool:
+        return self.state == RoundState.DEAL_STARTED
+    
+    def is_deal_ended(self) -> bool:
+        return self.state == RoundState.DEAL_ENDED
+    
+    def is_resultedd(self) -> bool:
+        return self.state == RoundState.RESULTED
+    
+    def is_closed(self) -> bool:
+        return self.state == RoundState.CLOSED
+    
+    def set_bet_started(self):
+        self.state = RoundState.BET_STARTED
+    
+    def set_bet_ended(self):
+        self.state = RoundState.BET_ENDED
+
+    def set_deal_started(self):
+        self.state = RoundState.DEAL_STARTED
+
+    def set_deal_ended(self):
+        self.state = RoundState.DEAL_ENDED
+
+    def set_resulted(self):
+        self.state = RoundState.RESULTED
+
+    def set_closed(self):
+        self.state = RoundState.CLOSED

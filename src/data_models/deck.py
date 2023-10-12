@@ -48,7 +48,13 @@ class Deck:
         self.ended_at = data.get('ended_at')
 
         self.current_round = Round(data['current_round']) if data.get('current_round') else None #should check it
-        self.round_histories = RoundHistories(data['round_histories']) if data.get('round_histories') else RoundHistories([])
+        # self.round_histories = RoundHistories(data['round_histories']) if data.get('round_histories') else RoundHistories([])
+        if self.current_round is not None:
+            self.current_round.set_parent(self)
+
+    # when init data, should set parent object here
+    def set_parent(self, shoe: any) -> None:
+        self.shoe = shoe
 
     def to_dict(self) -> dict:
         deck_hash = {
@@ -65,8 +71,5 @@ class Deck:
 
         if self.current_round:
             deck_hash['current_round'] = self.current_round.to_dict()
-
-        if self.round_histories:
-            deck_hash['round_histories'] = self.round_histories.to_list()
 
         return deck_hash
