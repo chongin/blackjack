@@ -1,4 +1,5 @@
 import threading
+from logger import Logger
 
 
 class ConnectionManager:
@@ -18,8 +19,9 @@ class ConnectionManager:
         self.connections = []
         self.mutex = threading.Lock()
 
-    def boardcast_message(self, data: dict) -> bool:
-        pass
+    def broadcast_message(self, data: dict) -> bool:
+        Logger.info("Broadcase message success", data)
+        return True
     
 
 

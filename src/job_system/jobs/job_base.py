@@ -7,7 +7,7 @@ class JobBase:
     def __init__(self, data: dict) -> None:
         self.job_id = str(ULID())
         self.job_name = self._get_class_name()
-        self.shoe_id = data['shoe_id']
+        self.shoe_id = data['shoe_name']
         self.round_id = data['round_id']
         self.round_state = data['state']
         self.live_period_in_seconds = data['live_period_in_secondss']

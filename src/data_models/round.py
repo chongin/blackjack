@@ -82,9 +82,9 @@ class Round:
             'deck_index': self.deck_index,
             'hand': self.hand,
             'state': self.state,
+            'shoe_name': self.deck.shoe.shoe_name,
             'started_at': self.started_at,
             'ended_at': self.ended_at,
-            'updated_at': self.updated_at,
         }
 
         info.update(self.deck.shoe.notify_info())

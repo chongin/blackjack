@@ -8,6 +8,8 @@ class NotifyBetEndedJob(JobBase):
             "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
         }))
 
+        self.bet_started_at = data['started_at']
+
 
 class NotifyClosedEndedJob(JobBase):
     def __init__(self, data: dict) -> None:

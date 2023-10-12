@@ -14,10 +14,6 @@ class QueryGameBusinessLogic:
         self._do_validation(shoe_name, player_name)
         self._process()
         return self._compose_result()
-        
-
-        
-
 
     def _do_validation(self, shoe_name: str, player_name: str) -> None:
         # authen player:

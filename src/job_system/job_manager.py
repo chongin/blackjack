@@ -90,8 +90,8 @@ class JobManager:
                     self.jobs.remove(job)
         self.mutex.release()
         return timeout_jobs
-    
+
     def handle_timeout_jobs(self, timeout_jobs: list[JobBase]):
         # to find the control and handle it.
         # should update round state and brocast to all clients
-        pass        
+        pass

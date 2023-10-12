@@ -8,6 +8,8 @@ from api_clients.authorization_api_client import AuthorizationApiClient
 from api_clients.wallet_api_client import WalletApiClient
 from exceptions.system_exception import *
 from job_system.job_manager import JobManager
+from api.connection_manager import ConnectionManager
+
 
 class BetBusinessLogic:
     def __init__(self) -> None:
@@ -111,10 +113,22 @@ class BetBusinessLogic:
         need_notify = self.context['need_notify']
         current_round = self.context['current_round']
         if need_notify:
-            JobManager.instance().add_notify_bet_ended_job(current_round.notify_info())
+            self._broadcast_message_to_clients(current_round)
+            self.create_next_job(current_round)
 
     # conver data to client
     def _compose_result(self) -> dict:
         shoe = self.context['shoe']
         player_profile = self.context['player_profile']
         return BetDomainModel(shoe, player_profile).to_dict()
+
+    # broadcase message through websocket
+    def _broadcast_message_to_clients(self, current_round) -> None:
+        message = {'action': 'notify_bet_started'}
+        message.update(current_round.notify_info())
+        message.update({'bet_started_at': current_round.bet_started_at})
+        ConnectionManager.instance().broadcast_message(message)
+
+    # createa next flow control job
+    def create_next_job(self, current_round) -> None:
+        JobManager.instance().add_notify_bet_ended_job(current_round.notify_info())
