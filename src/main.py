@@ -1,10 +1,16 @@
 from servers.http_server import HttpServer
-from message_factory import MessageFactory
-from message_driver import MessageDriver
+from servers.web_socket_server import WebSocketServer
+from job_system.job_manager import JobManager
+
 
 if __name__ == '__main__':
+    # start job manager to handle the game flow
+    JobManager.instance().start_timer()
 
-    p = MessageFactory.instance().create_request('query_game', {"player_name": "abc", "table_name": "dd"})
-    print(p)
+    # start the web server to handle cient connection for pushing message to client
+    # ### WebSocketServer().run()
+
+    # start web server to handle client request for client easily to handle timeout
+    # or maybe later can accept other service api call.
     web_server = HttpServer(host='localhost', port=8080)
     web_server.run()

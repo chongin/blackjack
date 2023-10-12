@@ -1,0 +1,23 @@
+from job_system.jobs.job_base import JobBase
+from configuration.system_config import SystemConfig
+
+
+class NotifyBetEndedJob(JobBase):
+    def __init__(self, data: dict) -> None:
+        super().__init__(data.append({
+            "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
+        }))
+
+
+class NotifyClosedEndedJob(JobBase):
+    def __init__(self, data: dict) -> None:
+        super().__init__(data.append({
+            "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
+        }))
+
+
+class NotifyNextRoundStartedJob(JobBase):
+    def __init__(self, data: dict) -> None:
+        super().__init__(data.append({
+            "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
+        }))

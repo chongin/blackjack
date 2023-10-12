@@ -4,7 +4,8 @@ from business_logic.domain_models.bet_domain_model import BetDomainModel
 from api.messages.components.bet_option_req import BetOptionsReq
 from data_models.round import PlayerGameInfo
 from data_models.bet_option import BetOption, BetOptions
-
+from api_clients.authorization_api_client import AuthorizationApiClient
+from api_clients.wallet_api_client import WalletApiClient
 from exceptions.system_exception import *
 
 
@@ -15,7 +16,10 @@ class BetBusinessLogic:
     
     def handle_bet(self, shoe_name: str, player_name: str, round_id: str,
                    bet_options_req: BetOptionsReq) -> dict:
-        #do validation
+        # authen player:
+        AuthorizationApiClient().validate_player({'player_name': player_name})
+
+        # do validation
         shoe_dm = self.shoe_repository.retrieve_shoe_model(shoe_name)
         if shoe_dm is None:
             raise TableNotFoundException(f"Cannot find this table: {shoe_name}")
@@ -59,6 +63,12 @@ class BetBusinessLogic:
 
         # calculate player balance
         player_profile_dm.deduct_balance(total_bet_amt)
+
+        # call wallet api to deduct balance
+        WalletApiClient().withdraw({
+            'total_bet_amt': total_bet_amt,
+            'player_id': player_profile_dm.player_id
+        })
 
         # save data to db
         self.shoe_repository.save_shoe(shoe_dm)

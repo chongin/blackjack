@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-10-11T15:32:27.410Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="AE2pK6rZ9EiMiOUOgtU8" version="22.0.4" type="device">
+<mxfile host="app.diagrams.net" modified="2023-10-11T18:01:37.644Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="Z3v9BZi8pgHMj65KViJJ" version="22.0.4" type="device">
   <diagram name="Page-1" id="CO7KEho-Hl7rEbGbKwKy">
     <mxGraphModel dx="954" dy="585" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -119,8 +119,8 @@
         <mxCell id="zWW6qGMwEGNfqiaWWx32-37" value="After the system calcuate all the result and save the result to database, then it will change to resulted" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" vertex="1" parent="1">
           <mxGeometry x="40" y="630" width="210" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="zWW6qGMwEGNfqiaWWx32-39" value="Game Flow state Machine" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="340" y="20" width="60" height="30" as="geometry" />
+        <mxCell id="zWW6qGMwEGNfqiaWWx32-39" value="Game Flow state Machine" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="315" y="20" width="160" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

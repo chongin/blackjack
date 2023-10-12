@@ -6,6 +6,7 @@ import re
 from utils.util import Util
 from api.messages.base_request import BaseRequest
 
+
 class MessageFactory:
     _instance = None
 

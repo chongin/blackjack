@@ -1,4 +1,7 @@
-class MetaData:
+import threading
+
+
+class ConnectionManager:
     _instance = None
 
     def __init__(self) -> None:
@@ -12,9 +15,11 @@ class MetaData:
         return cls._instance
 
     def __init_manual__(self) -> None:
-        self.currency = 'CAD'
-        self.number_of_decks = 8
-        self.bet_option_names = ['base_win', 'pair']
-        self.odds = {'base_game': 1, 'blackjack': 2, 'pair': 3}
+        self.connections = []
+        self.mutex = threading.Lock()
 
-            
+    def boardcast_message(self, data: dict) -> bool:
+        pass
+    
+
+

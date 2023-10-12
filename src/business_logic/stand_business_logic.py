@@ -2,6 +2,7 @@ from business_logic.repositories.shoe_respository import ShoeRepository
 from business_logic.repositories.player_profile_respository import PlayerProfileRespository
 from business_logic.domain_models.stand_domain_model import StandDomainModel
 from exceptions.system_exception import *
+from api_clients.authorization_api_client import AuthorizationApiClient
 
 
 class StandBusinessLogic:
@@ -10,7 +11,10 @@ class StandBusinessLogic:
         self.player_profile_respository = PlayerProfileRespository()
     
     def handle_stand(self, shoe_name: str, player_name: str, round_id: str) -> dict:
-        #do validation
+        # authen player:
+        AuthorizationApiClient().validate_player({'player_name': player_name})
+
+        # do validation
         shoe_dm = self.shoe_repository.retrieve_shoe_model(shoe_name)
         if shoe_dm is None:
             raise TableNotFoundException(f"Cannot find this table: {shoe_name}")

@@ -1,4 +1,4 @@
-from meta_data.meta_data import MetaData
+from configuration.system_config import SystemConfig
 from exceptions.system_exception import ParameterWrongException
 
 class BetOptionReq:
@@ -14,7 +14,7 @@ class BetOptionReq:
         return bet_option_data
 
     def validate(self) -> bool:
-        if self.option_name not in MetaData.instance().bet_option_names:
+        if self.option_name not in SystemConfig.instance().bet_option_names:
             raise ParameterWrongException(f"This option name: {self.option_name} is not suppported.")
         
         if type(self.bet_amt) is not int:
