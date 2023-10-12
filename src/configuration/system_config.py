@@ -27,7 +27,8 @@ class SystemConfig:
         self.job_timeouts = {
             'NotifyBetEndedJob': 1,
             'NotifyClosedJob': 3,
-            'NotifyNextRoundStartedJob': 1
+            'NotifyNextRoundStartedJob': 1,
+            'NotifyDealStartedJob': 1,
         }
 
     def get_job_timeout_in_seconds(self, job_name: str) -> int:

@@ -1,23 +1,18 @@
-
-from data_models.round import Round
 from business_logic.flow_control.flow_state import FlowState
+from api_clients.deck_card_api_client import DeckCardApiClient
 from business_logic.repositories.shoe_respository import ShoeRepository
 from logger import Logger
-from api.connection_manager import ConnectionManager
 
-
-class BetClosedFlow:
+class DealStartedFlow:
     def __init__(self, job_data: dict) -> None:
         self.shoe_repository = ShoeRepository()
         self.shoe_name = job_data['shoe_name']
         self.round_id = job_data['round_id']
-
-    def handle_bet_closed(self) -> FlowState:
-        # check need to update state or not
-        # create the bet_ended job
-        self._process()
-        self._broadcast_message_to_clients(self.current_round)
-        self.create_next_job(self.current_round)
+        self.player_id = job_data['player_id']
+    
+    def handle_deal_started(self) -> FlowState:
+        # call api to draw card
+        # update round state
 
     def _process(self) -> None:
         shoe = self.shoe_repository.retrieve_shoe_model(self.shoe_name)
@@ -30,20 +25,7 @@ class BetClosedFlow:
             Logger.error("Round id is not matched.", self.round_id, current_round.round_id)
             return FlowState.Fail_NotRetryable
         
-        if not current_round.is_bet_started():
+        if not current_round.is_bet_ended() or not current_round.is_deal_started():
             Logger.error("Round state is not matched", current_round.state)
             return FlowState.Fail_NotRetryable
-        
-        current_round.set_bet_ended()
-        self.shoe_repository.save_shoe(shoe)
-        self.current_round = current_round
 
-    def _broadcast_message_to_clients(self, current_round: Round) -> None:
-        message = {'action': 'notify_bet_closed'}
-        message.update(current_round.notify_info())
-        message.update({'bet_ended_at': current_round.bet_ended_at})
-        ConnectionManager.instance().broadcast_message(message)
-
-    def create_next_job(self, current_round: Round) -> None:
-        # retrieve first player
-        pass

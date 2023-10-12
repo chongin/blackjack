@@ -1,4 +1,4 @@
-from data_models.player_game_infos import PlayerGameInfos, BankerGameInfo, PlayerGameInfo
+from data_models.player_game_info import PlayerGameInfos, BankerGameInfo, PlayerGameInfo
 from ulid import ULID
 from utils.util import Util
 
@@ -70,11 +70,6 @@ class Round:
             round_hash['banker_game_info'] = self.banker_game_info.to_dict()
         return round_hash
     
-    def find_player_game_info_by_player_id(self, player_id: str) -> PlayerGameInfo:
-        for player_game_info in self.player_game_infos:
-            if player_game_info.player_id == player_id:
-                return player_game_info
-        return None
 
     def notify_info(self) -> dict:
         info = {

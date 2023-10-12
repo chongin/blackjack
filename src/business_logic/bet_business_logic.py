@@ -1,5 +1,6 @@
 from business_logic.repositories.shoe_respository import ShoeRepository
 from business_logic.repositories.player_profile_respository import PlayerProfileRespository
+from business_logic.repositories.round_respository import RoundRepository
 from business_logic.domain_models.bet_domain_model import BetDomainModel
 from api.messages.components.bet_option_req import BetOptionsReq
 from data_models.round import PlayerGameInfo
@@ -75,7 +76,8 @@ class BetBusinessLogic:
                 "bet_amt": bet_option_req.bet_amt
             }))
 
-        player_game_info = current_round.find_player_game_info_by_player_id(player_profile.player_id)
+        round_repository = RoundRepository(current_round)
+        player_game_info = round_repository.find_player_game_info_by_player_id(player_profile.player_id)
         if player_game_info is None:
             player_game_info = PlayerGameInfo({
                 "player_id": player_profile.player_id,

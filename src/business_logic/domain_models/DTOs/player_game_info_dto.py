@@ -1,4 +1,4 @@
-from data_models.player_game_infos import PlayerGameInfo, PlayerGameInfos, BankerGameInfo
+from data_models.player_game_info import PlayerGameInfo, PlayerGameInfos, BankerGameInfo
 from data_models.card import Cards
 from business_logic.domain_models.DTOs.card_dto import CardsDto
 from business_logic.domain_models.DTOs.bet_option_dto import BetOptionsDTO
