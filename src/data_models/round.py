@@ -9,8 +9,23 @@ class RoundState:
     BET_ENDED = "bet_ended"
     DEAL_STARTED = "deal_started"
     DEAL_ENDED = "deal_ended"
+    PLAYERS_STANDED = 'players_standed'
+    BANKER_STANDED = 'banker_standed'
     RESULTED = "resulted"
     CLOSED = "closed"
+
+
+class DealCardControlInfo:
+    def __init__(self, data: dict) -> None:
+        self.player_id = data['player_id']
+        self.deal_card_index = data['deal_card_index']
+        self.is_banker = data['is_banker']
+
+
+class HitCardControlInfo:
+    def __init__(self, data: dict) -> None:
+        self.player_id = data['player_id']
+        self.is_banker = data['is_banker']
 
 
 class Round:
@@ -24,9 +39,8 @@ class Round:
             'player_game_infos': [],
             'banker_game_info': [],
             'has_black_card': False,
-            'result': [],
-            'started_at': None,
-            'ended_at': None,
+            'bet_started_at': None,
+            'bet_ended_at': None,
             'created_at': Util.current_utc_time(),
             'updated_at': Util.current_utc_time()
         }
@@ -41,8 +55,10 @@ class Round:
         self.player_game_infos = PlayerGameInfos(data['player_game_infos']) if data.get('player_game_infos') else PlayerGameInfos([])
         self.banker_game_info = BankerGameInfo(data['banker_game_info']) if data.get('banker_game_info') else {}
         self.has_black_card = data['has_black_card']
-        self.started_at = data.get('started_at')
-        self.ended_at = data.get('ended_at')
+        self.bet_started_at = data.get('bet_started_at')
+        self.bet_ended_at = data.get('bet_ended_at')
+        self.deal_card_info = data.get('deal_card_info')
+        self.hit_card_info = data.get('hit_card_info')
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
 
@@ -58,10 +74,7 @@ class Round:
             'state': self.state,
             'player_game_infos': self.player_game_infos.to_list(),
             'has_black_card': self.has_black_card,
-            'started_at': self.started_at,
-            'ended_at': self.ended_at,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
+            'bet_started_at': self.bet_started_at,
         }
 
         if type(self.banker_game_info) is dict:
@@ -78,8 +91,7 @@ class Round:
             'hand': self.hand,
             'state': self.state,
             'shoe_name': self.deck.shoe.shoe_name,
-            'started_at': self.started_at,
-            'ended_at': self.ended_at,
+            'bet_started_at': self.bet_started_at,
         }
 
         info.update(self.deck.shoe.notify_info())
@@ -106,6 +118,12 @@ class Round:
     def is_deal_ended(self) -> bool:
         return self.state == RoundState.DEAL_ENDED
     
+    def is_players_standed(self) -> bool:
+        return self.state == RoundState.PLAYERS_STANDED
+    
+    def is_banker_standed(self) -> bool:
+        return self.state == RoundState.BANKER_STANDED
+    
     def is_resultedd(self) -> bool:
         return self.state == RoundState.RESULTED
     
@@ -124,8 +142,29 @@ class Round:
     def set_deal_ended(self):
         self.state = RoundState.DEAL_ENDED
 
+    def set_players_standed(self):
+        self.state = RoundState.PLAYERS_STANDED
+
+    def set_banker_standed(self):
+        self.state = RoundState.BANKER_STANDED
+
     def set_resulted(self):
         self.state = RoundState.RESULTED
 
     def set_closed(self):
         self.state = RoundState.CLOSED
+
+    def find_player_game_info_by_player_id(self, player_id: str) -> PlayerGameInfo:
+        for player_game_info in self.player_game_infos:
+            if player_game_info.player_id == player_id:
+                return player_game_info
+        return None
+    
+    def find_first_player_game_info(self) -> PlayerGameInfo:
+        if len(self.player_game_infos) > 0:
+            return self.player_game_infos[0]
+        return None
+    
+    def find_next_player_game_info(self, prev_player_id: str) -> PlayerGameInfo:
+        for player_game_info in self.player_game_infos:
+            pass

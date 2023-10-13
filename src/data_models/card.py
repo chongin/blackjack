@@ -3,7 +3,7 @@ from data_models.base_model import BaseModel
 
 class Card:
     def __init__(self, data: dict) -> None:
-        self.card_code = data['card_code']
+        self.code = data['card_code']
         self.value = data['value']
         self.suit = data['suit']
         self.received_at = data['received_at']
