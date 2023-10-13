@@ -3,6 +3,9 @@ from api_clients.deck_card_api_client import DeckCardApiClient
 from business_logic.repositories.shoe_respository import ShoeRepository
 from logger import Logger
 from data_models.card import Card
+from exceptions.system_exception import TimeoutException
+from api.connection_manager import ConnectionManager
+
 
 class DealStartedFlow:
     def __init__(self, job_data: dict) -> None:
@@ -18,21 +21,17 @@ class DealStartedFlow:
         if not self._do_validation():
             return FlowState.Fail_NotRetryable
 
+        self._process()
+        self._after_process()
+
     def _process(self) -> FlowState:
-        current_player_game_info = self.context['current_round']
-        current_round = self.context['current_round']
-        try:
-            card_detail = DeckCardApiClient().draw_one_card(current_round.deck.deck_api_id)
-        except Exception as ex:
-            Logger.error(f"Call draw card api exception, error: {str(ex)}")
-            return FlowState.Fail_Retryable
-        
-        card = Card({
-            'code': card_detail.code,
-            'value': card_detail.value,
-            'suit': card_detail.suit
-        })
-        current_player_game_info.first_two_cards.append(card)
+        api_re = self.draw_one_card_from_server()
+        if api_re != FlowState.Success:
+            return api_re
+
+        self.assign_card_to_current_player_game_info()
+        self._pop_up_current_player_id_from_deal_card_sequences()
+        self._save_data
 
     def _do_validation(self) -> bool:
         shoe = self.shoe_repository.retrieve_shoe_model(self.shoe_name)
@@ -49,44 +48,85 @@ class DealStartedFlow:
             Logger.error("Round state is not matched", current_round.state)
             return False
         
-        self.context['current_round'] = current_round
-        if current_round.is_bet_ended():
-            return self._validate_first_player_game_info()
-
-        return self._validate_current_player_game_info()
-    
-    def _validate_first_player_game_info(self) -> bool:
-        current_round = self.context['current_round']
-        current_player_game_info = current_round.find_first_player_game_info()
-        if not current_player_game_info:
-            Logger.error(f"Cannot find first player game info. round state: {current_round.state}")
+        if len(current_round.deal_card_sequences) == 0:
+            Logger.error("There is no player or banker need to deal card.")
             return False
         
-        count = len(current_player_game_info.first_two_cards)
-        if count != 0:
-            Logger.error(f"Player first two card sequence is not matche round state. player has {count} card. round state: {current_round.state}")
-            return False
-        
-        self.context['current_player_game_info'] = current_player_game_info
-        
-        return True
-
-    def _validate_current_player_game_info(self):
-        current_round = self.context['current_round']
-        deal_card_info = current_round['deal_card_info']
-        if not deal_card_info.is_banker: 
-            current_player_game_info = current_round.find_player_game_info_by_player_id(deal_card_info.player_id)
+        # get current player id from the records
+        current_player_id = current_round.deal_card_sequences[0]
+        if current_player_id != 'banker':
+            # this is deal to player, so get the player game info
+            current_player_game_info = round.find_player_game_info_by_player_id(current_player_id)
+            if current_player_game_info == None:
+                Logger.error("Cannot find the current player game info.", current_player_id)
+                return False
+            self.context['current_player_game_info'] = current_player_game_info
         else:
-            current_player_game_info = current_round.banker_game_info
-
-        if not current_player_game_info:
-            Logger.error(f"Cannot find the match player game info. round state: {current_round.state}")
-            return False
-        
-        count = len(current_player_game_info.first_two_cards)
-        if count != current_round.deal_card_info.deal_card_index:
-            Logger.error(f"Player:{deal_card_info.is_banker} first_two_card: {count}, but deal_card_info has: {current_round.deal_card_info.deal_card_index}")
-            return False
-        
-        self.context['current_player_game_info'] = current_player_game_info
+            # this is deal to banker, so get the banker game info
+            self.context['current_player_game_info'] = round.banker_game_info
+        self.context['current_round'] = current_round
         return True
+    
+    def draw_one_card_from_server(self) -> bool:
+        current_round = self.context['current_round']
+        try:
+            card_detail = DeckCardApiClient().draw_one_card(current_round.deck.deck_api_id)
+        except TimeoutException as ex:
+            Logger.error(f"Call draw card api has timeout exception, error: {str(ex)}")
+            return FlowState.Fail_Retryable
+        except Exception as ex:
+            Logger.error(f"Call draw card api exception, error: {str(ex)}")
+            return FlowState.Fail_NotRetryable
+        
+        card = Card({
+            'code': card_detail.code,
+            'value': card_detail.value,
+            'suit': card_detail.suit
+        })
+
+        self.context['card'] = card
+        return FlowState.Success
+    
+    def assign_card_to_current_player_game_info(self) -> None:
+        current_player_game_info = self.context['current_player_game_info']
+        card = self.context['card']
+
+        # assign it to player game info 
+        current_player_game_info.first_two_cards.append(card)
+
+    def _pop_up_current_player_id_from_deal_card_sequences(self):
+        # pop up this player id from the deal_card_sequences
+        current_round = self.context['current_round']
+        pop_player_id = current_round.deal_card_sequences.pop(0)
+        Logger.debug("Pop up player_id", pop_player_id)
+        
+    def _update_round_state(self):
+        current_round = self.context['current_round']
+        if len(current_round.deal_card_sequences) == 0:
+            # already deal all cards
+            current_round.set_deal_ended()
+        else:
+            current_round.set_deal_started()
+
+    def _save_data(self):
+        current_round = self.context['current_round']
+        self.shoe_repository.save_shoe(current_round.deck.shoe)
+    
+    def _broadcast_messages_to_clients(self):
+        current_round = self.context['current_round']
+        current_player_game_info = self.context['current_player_game_info']
+        card = self.context['card']
+
+        message = {'action': 'notify_deal_card'}
+        message.update(current_round.notify_info())
+        message.update({'deal_to_player': current_player_game_info.player_id})
+        message.update({'card': card.to_dict()})
+        ConnectionManager.instance().broadcast_message(message)
+
+
+    def _create_next_job(self):
+        current_round = self.context['current_round']
+        if current_round.is_deal_started():
+            current_round = self.context['current_round']
+        else:
+            

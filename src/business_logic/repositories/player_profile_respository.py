@@ -1,6 +1,6 @@
 from data_models.player_profile import PlayerProfile
 from data_models.db_conn.firebase_client import FirebaseClient
-
+from logger import Logger
 
 class PlayerProfileRespository:
     def __init__(self) -> None:
@@ -28,5 +28,5 @@ class PlayerProfileRespository:
     
     def save_player(self, player: PlayerProfile) -> bool:
         FirebaseClient.instance().set_value(f"players/{player.player_name}", player.to_dict())
-        print("save player success")
+        Logger.debug(f"save player success, player_name: {player.player_name}, player_id: {player.player_id}")
         return True

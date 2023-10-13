@@ -58,4 +58,18 @@ class RequestNotFoundException(SystemException):
     def __init__(self, error_message):
         super().__init__(400, error_message)
 
+
+class RequestException(SystemException):
+    def __init__(self, error_message):
+        super().__init__(400, error_message)
+
+
+class RequestUnhandleException(SystemException):
+    def __init__(self, error_message):
+        super().__init__(400, error_message)
+
+
+class StateMachineException(SystemException):
+    def __init__(self,  err_message):
+        super().__init__(400, err_message)
 # Backend exception ended.

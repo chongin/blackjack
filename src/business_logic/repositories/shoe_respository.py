@@ -3,6 +3,7 @@ from api_clients.deck_card_api_client import DeckCardApiClient
 from data_models.deck import Deck
 from data_models.round import Round
 from data_models.db_conn.firebase_client import FirebaseClient
+from logger import Logger
 
 class ShoeRepository:
     def __init__(self) -> None:
@@ -41,5 +42,5 @@ class ShoeRepository:
  
     def save_shoe(self, shoe: Shoe) -> bool:
         FirebaseClient.instance().set_value(f"shoes/{shoe.shoe_name}", shoe.to_dict())
-        print("save shoe success")
+        Logger.debug(f"save shoe success: {shoe.shoe_name}")
         return True

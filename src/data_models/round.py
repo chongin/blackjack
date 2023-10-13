@@ -1,7 +1,7 @@
 from data_models.player_game_info import PlayerGameInfos, BankerGameInfo, PlayerGameInfo
 from ulid import ULID
 from utils.util import Util
-
+from exceptions.system_exception import StateMachineException
 
 class RoundState:
     OPENED = "opened"
@@ -13,19 +13,6 @@ class RoundState:
     BANKER_STANDED = 'banker_standed'
     RESULTED = "resulted"
     CLOSED = "closed"
-
-
-class DealCardControlInfo:
-    def __init__(self, data: dict) -> None:
-        self.player_id = data['player_id']
-        self.deal_card_index = data['deal_card_index']
-        self.is_banker = data['is_banker']
-
-
-class HitCardControlInfo:
-    def __init__(self, data: dict) -> None:
-        self.player_id = data['player_id']
-        self.is_banker = data['is_banker']
 
 
 class Round:
@@ -57,8 +44,8 @@ class Round:
         self.has_black_card = data['has_black_card']
         self.bet_started_at = data.get('bet_started_at')
         self.bet_ended_at = data.get('bet_ended_at')
-        self.deal_card_info = data.get('deal_card_info')
-        self.hit_card_info = data.get('hit_card_info')
+        self.deal_card_sequences = data.get('deal_card_sequences') # this is the player id list
+        self.hit_card_sequences = data.get('hit_card_sequences')
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
 
@@ -67,7 +54,7 @@ class Round:
         self.deck = deck
 
     def to_dict(self) -> dict:
-        round_hash = {
+        hash = {
             'round_id': self.round_id,
             'deck_index': self.deck_index,
             'hand': self.hand,
@@ -75,14 +62,19 @@ class Round:
             'player_game_infos': self.player_game_infos.to_list(),
             'has_black_card': self.has_black_card,
             'bet_started_at': self.bet_started_at,
+            'bet_ended_at': self.bet_ended_at,
+            'deal_card_sequences': self.deal_card_sequences,
+            'hit_card_sequences': self.hit_card_sequences,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
         }
 
         if type(self.banker_game_info) is dict:
-            round_hash['banker_game_info'] = {}
+            hash['banker_game_info'] = {}
         else:
-            round_hash['banker_game_info'] = self.banker_game_info.to_dict()
-        return round_hash
-    
+            hash['banker_game_info'] = self.banker_game_info.to_dict()
+
+        return hash   
 
     def notify_info(self) -> dict:
         info = {
@@ -131,13 +123,22 @@ class Round:
         return self.state == RoundState.CLOSED
     
     def set_bet_started(self):
-        self.state = RoundState.BET_STARTED
+        if self.is_opened():
+            self.state = RoundState.BET_STARTED
+        else:
+            raise StateMachineException(f"Can not change to bet_started from this state: {self.state}")
     
     def set_bet_ended(self):
-        self.state = RoundState.BET_ENDED
-
+        if self.is_bet_started():
+            self.state = RoundState.BET_ENDED
+        else:
+            raise StateMachineException(f"Can not change to bet_ended from this state: {self.state}")
+        
     def set_deal_started(self):
-        self.state = RoundState.DEAL_STARTED
+        if self.is_bet_ended() or self.is_deal_started():
+            self.state = RoundState.DEAL_STARTED
+        else:
+            raise StateMachineException(f"Can not change to deal_started from this state: {self.state}")
 
     def set_deal_ended(self):
         self.state = RoundState.DEAL_ENDED
@@ -159,12 +160,11 @@ class Round:
             if player_game_info.player_id == player_id:
                 return player_game_info
         return None
-    
-    def find_first_player_game_info(self) -> PlayerGameInfo:
-        if len(self.player_game_infos) > 0:
-            return self.player_game_infos[0]
-        return None
-    
-    def find_next_player_game_info(self, prev_player_id: str) -> PlayerGameInfo:
+
+    def get_all_player_id_have_betted(self) -> list:
+        all_bet_player_ids = []
         for player_game_info in self.player_game_infos:
-            pass
+            if player_game_info.bet_options:
+                all_bet_player_ids.append(player_game_info.player_id)
+
+        return all_bet_player_ids
