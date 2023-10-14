@@ -8,6 +8,8 @@ from data_models.player_game_info import BankerGameInfo
 from job_system.job_manager import JobManager
 from exceptions.system_exception import TimeoutException
 from utils.util import Util
+from flow_control.game_rules.hit_card_rule import HitCardRule
+
 
 class DealEndedFlow:
     def __init__(self, job_data: dict) -> None:
@@ -19,7 +21,23 @@ class DealEndedFlow:
     
     def handle_flow(self) -> FlowState:
         if not self._do_validation():
-            return FlowState.Fail_NotRetryable 
+            return FlowState.Fail_NotRetryable
+        
+        if not self._process():
+            return FlowState.Fail_NotRetryable
+
+        if self.context['is_hit_by_player']:
+            self._notify_player_to_hit_card()
+        else:
+            self.broadcast_banker_hit_card_to_clients()
+
+            current_player_game_info = self.context['current_player_game_info']
+            current_round = self.context['current_round']
+            # check if banker can hit more card or not
+            if HitCardRule(current_player_game_info).check_banker_can_hit():
+                JobManager.add_notify_deal_ended_job(current_round.notify_info())
+            else:
+                JobManager.add_notify_resulted_job(current_round.notify_info())
 
     def _do_validation(self) -> bool:
         shoe = self.shoe_repository.retrieve_shoe_model(self.shoe_name)
@@ -44,11 +62,22 @@ class DealEndedFlow:
         return True
     
     def _process(self) -> bool:
-        pass
+        if not self._get_current_player_game_info():
+            return False
+        
+        if not self._check_can_hit():
+            return False
+        
+        self.update_round_state_to_deal_ended()
+        self.save_data()
+
+        if not self.context['is_hit_by_player']:
+            self._handle_banker_hit_card()
+            self.save_data()
 
     def _get_current_player_game_info(self) -> bool:
         current_round = self.context['current_round']
-         # get current player id from the records
+        # get current player id from the records
         current_player_id = current_round.hit_card_sequences[0]
         if current_player_id != BankerGameInfo.BANKER_ID:
             # this is deal to player, so get the player game info
@@ -62,24 +91,36 @@ class DealEndedFlow:
             # this is deal to banker, so get the banker game info
             self.context['current_player_game_info'] = current_round.banker_game_info
             self.context['is_hit_by_player'] = False
+        
+        if self.context['current_player_game_info'].can_hit():
+            Logger.error("Current player cannot hit card", current_player_game_info.to_dict())
+            return False
         return True
+
+    def _check_can_hit(self):
+        current_player_game_info = self.context['current_player_game_info']
+        is_hit_by_player = self.context['is_hit_by_player']
+        if is_hit_by_player:
+            return HitCardRule(current_player_game_info).check_player_can_hit()
+        else:
+            return HitCardRule(current_player_game_info).check_banker_can_hit()
 
     def _notify_player_to_hit_card(self):
         current_round = self.context['current_round']
         current_player_game_info = self.context['current_player_game_info']
-        
+
         message = {'action': 'notify_hit_stand'}
         message.update(current_round.notify_info())
         message.update({
             'player_id': current_player_game_info.player_id
         })
         ConnectionManager.instance().send_message_to_one_player(message)
-        pass
-
+    
     def _handle_banker_hit_card(self):
         # draw one card
-    
-
+        self.draw_one_card_from_server()
+        self.assign_card_to_banker_game_info()
+ 
     def draw_one_card_from_server(self) -> bool:
         current_round = self.context['current_round']
         try:
@@ -102,9 +143,25 @@ class DealEndedFlow:
         self.context['card'] = card
         return True
     
-    def assign_card_to_current_player_game_info(self) -> None:
+    def assign_card_to_banker_game_info(self) -> None:
         current_player_game_info = self.context['current_player_game_info']
         card = self.context['card']
-
-        # assign it to player game info 
         current_player_game_info.hit_cards.append(card)
+
+    def update_round_state_to_deal_ended(self):
+        current_round = self.context['current_round']
+        current_round.set_deal_ended()
+
+    def save_data(self):
+        current_round = self.context['current_round']
+        self.shoe_repository.save_shoe(current_round.deck.shoe)
+
+    def broadcast_banker_hit_card_to_clients(self):
+        current_round = self.context['current_round']
+        card = self.context['card']
+
+        message = {'action': 'notify_hit_card'}
+        message.update(current_round.notify_info())
+        message.update({'hit_to_banker': True})
+        message.update({'card': card.to_dict()})
+        ConnectionManager.instance().broadcast_message(message)

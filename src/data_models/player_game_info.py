@@ -22,10 +22,9 @@ class PlayerGameInfo:
             'result': self.result
         }
 
-    def can_hit(self):
-        return len(self.first_two_cards) == 2 and not self.is_bust()
+   
 
-    def total_point(self):
+    def total_point(self) -> int:
         sum = 0
         ace_sum = 0
         for card in self.first_two_cards:
@@ -47,7 +46,7 @@ class PlayerGameInfo:
             else:
                 return ace_sum
 
-    def is_bust(self):
+    def is_bust(self) -> bool:
         self.total_point() > 21
 
 
@@ -60,22 +59,20 @@ class PlayerGameInfos(list):
         return [item.to_dict() for item in self]
 
 
-class PlayerGameInfos(PlayerGameInfos):
-    pass
-
-#Banker only have one
-class BankerGameInfo:
+#  Banker only have one
+class BankerGameInfo(PlayerGameInfo):
     BANKER_ID = 'banker'
+
     def __init__(self, data: dict) -> None:
-        self.first_two_cards = Cards(data['first_two_cards']) if data.get('first_two_cards') else Cards([])
-        self.hit_cards = Cards(data['hit_cards']) if data.get('hit_cards') else Cards([])
-        self.is_stand = data['is_stand']
-        self.result = data.get('result')
-        
+        data.update({
+            'player_id': self.BANKER_ID,
+            'bet_options': None
+        })
+
+        super().__init__(data)
+
     def to_dict(self) -> dict:
-        return {
-            'first_two_cards': self.first_two_cards.to_list(),
-            'hit_cards': self.hit_cards.to_list(),
-            'is_stand': self.is_stand,
-            'result': self.result
-        }
+        hash = super().to_dict()
+        # hash.remove('player_id')
+        hash.remove('bet_options')
+        return hash

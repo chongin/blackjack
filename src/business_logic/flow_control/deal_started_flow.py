@@ -7,6 +7,7 @@ from exceptions.system_exception import TimeoutException
 from api.connection_manager import ConnectionManager
 from data_models.player_game_info import BankerGameInfo
 from job_system.job_manager import JobManager
+from flow_control.game_rules.deal_card_rule import DealCardRule
 from utils.util import Util
 
 
@@ -33,13 +34,14 @@ class DealStartedFlow:
     def _process(self) -> bool:
         if not self._get_current_player_game_info():
             return False
-        
+        if not self.check_player_can_deal_card():
+            return False
         if not self.draw_one_card_from_server():
             return False
 
         self.assign_card_to_current_player_game_info()
-        self._pop_up_current_player_id_from_deal_card_sequences()
         self._update_round_state()
+        self._pop_up_current_player_id_from_deal_card_sequences()
         self._save_data
         return True
 
@@ -65,6 +67,10 @@ class DealStartedFlow:
         
         return True
     
+    def check_player_can_deal_card(self) -> bool:
+        current_player_game_info = self.context['current_player_game_info']
+        return DealCardRule(current_player_game_info).can_deal()
+
     def draw_one_card_from_server(self) -> bool:
         current_round = self.context['current_round']
         try:
