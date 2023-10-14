@@ -9,6 +9,7 @@ class PlayerGameInfo:
         self.hit_cards = Cards(data['hit_cards']) if data.get('hit_cards') else Cards([])
         self.is_stand = data['is_stand']
         self.result = data.get('result')
+
         self.bet_options = BetOptions(data['bet_options']) if data.get('bet_options') else BetOptions([])
 
     def to_dict(self) -> dict:
@@ -21,8 +22,6 @@ class PlayerGameInfo:
             'is_stand': self.is_stand,
             'result': self.result
         }
-
-   
 
     def total_point(self) -> int:
         sum = 0

@@ -1,6 +1,5 @@
 from business_logic.flow_control.flow_state import FlowState
 from api_clients.deck_card_api_client import DeckCardApiClient
-from business_logic.repositories.shoe_respository import ShoeRepository
 from logger import Logger
 from data_models.card import Card
 from exceptions.system_exception import TimeoutException
@@ -8,27 +7,21 @@ from data_models.player_game_info import BankerGameInfo
 from singleton_manger import SingletonManager
 from business_logic.flow_control.game_rules.deal_card_rule import DealCardRule
 from utils.util import Util
+from business_logic.flow_control.flow_base import FlowBase
 
 
-class DealStartedFlow:
-    def __init__(self, job_data: dict) -> None:
-        self.shoe_repository = ShoeRepository()
-        self.shoe_name = job_data['shoe_name']
-        self.round_id = job_data['round_id']
-        self.player_id = job_data['player_id']
-        self.context = {}
-    
-    def handle_flow(self) -> FlowState:
-        if not self._do_validation():
-            return FlowState.Fail_NotRetryable
-
-        if not self._process():
-            return self.context['flow_state'] if self.context.get('flow_state') else FlowState.Fail_NotRetryable
+class DealStartedFlow(FlowBase):    
+    def _do_self_validation(self) -> bool:
+        current_round = self.context['current_round']
+        if not current_round.is_bet_ended() or not current_round.is_deal_started():
+            Logger.error("Round state is not matched", current_round.state)
+            return False
         
-        self._broadcast_messages_to_clients()
-        self._create_next_job()
-
-        return FlowState.Success
+        if len(current_round.deal_card_sequences) == 0:
+            Logger.error("There is no player or banker need to deal card.")
+            return False
+        
+        return True
     
     def _process(self) -> bool:
         if not self._get_current_player_game_info():
@@ -44,26 +37,9 @@ class DealStartedFlow:
         self._save_data
         return True
 
-    def _do_validation(self) -> bool:
-        shoe = self.shoe_repository.retrieve_shoe_model(self.shoe_name)
-        if shoe is None:
-            Logger.error("Cannot find this shoe name", self.shoe_name)
-            return False
-        
-        current_round = shoe.current_deck.current_round
-        self.context['current_round'] = current_round
-        if self.round_id != current_round.round_id:
-            Logger.error("Round id is not matched.", self.round_id, current_round.round_id)
-            return False
-        
-        if not current_round.is_bet_ended() or not current_round.is_deal_started():
-            Logger.error("Round state is not matched", current_round.state)
-            return False
-        
-        if len(current_round.deal_card_sequences) == 0:
-            Logger.error("There is no player or banker need to deal card.")
-            return False
-        
+    def _after_process(self) -> bool:
+        self._broadcast_messages_to_clients()
+        self._create_next_job()
         return True
     
     def check_player_can_deal_card(self) -> bool:
@@ -91,7 +67,7 @@ class DealStartedFlow:
 
         self.context['card'] = card
         return True
-    
+
     def _get_current_player_game_info(self) -> bool:
         current_round = self.context['current_round']
         # get current player id from the records

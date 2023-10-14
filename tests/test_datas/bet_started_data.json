@@ -1,0 +1,64 @@
+{
+    "players": {
+      "chong": {
+        "player_id": "01HCDCFMGX8S89NWSKHCS4380Q",
+        "player_name": "chong",
+        "state": "active",
+        "wallet": {
+          "balance": 100,
+          "total_lost": 0,
+          "total_win": 0
+        }
+      }
+    },
+    "shoes": {
+      "table1": {
+        "config": {
+          "chips": [
+            1,
+            5,
+            10,
+            25,
+            50
+          ],
+          "number_of_decks": 8,
+          "player_mode": "single"
+        },
+        "current_deck": {
+          "black_card_postion": 353,
+          "current_round": {
+            "created_at": "2023-10-10T18:09:44",
+            "deck_index": 0,
+            "hand": 0,
+            "has_black_card": false,
+            "player_game_infos": [
+              {
+                "bet_options": [
+                  {
+                    "bet_amt": 20,
+                    "option_name": "base_win"
+                  }
+                ],
+                "is_stand": false,
+                "player_id": "01HCDCFMGX8S89NWSKHCS4380Q"
+              }
+            ],
+            "round_id": "01HCDCFMEJP0KDJFT9938Y4YYF",
+            "state": "bet_started",
+            "updated_at": "2023-10-10T18:09:44"
+          },
+          "deck_api_id": "3p40paa87x90",
+          "deck_index": 0,
+          "remaind_count_of_cards": 416,
+          "shoe_id": "01HCDCFMEJQ30W2899Z5D2ZTWG",
+          "started_at": "2023-10-10T18:09:44",
+          "state": "active"
+        },
+        "deck_api_id": "3p40paa87x90",
+        "shoe_id": "01HCDCFMEJQ30W2899Z5D2ZTWG",
+        "shoe_name": "table1",
+        "shuffer_count": 0,
+        "state": "active"
+      }
+    }
+  }

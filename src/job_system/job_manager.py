@@ -121,7 +121,7 @@ class JobManager:
         elif ret == FlowState.Fail_NotRetryable:
             Logger.error("Execute this job failed and not retryable, need to manual handle it.", job.to_dict())
         else:
-            Logger.info("Excute job successfull.", job.to_dict)
+            Logger.info("Excute job successfull.", job.to_dict())
 
     
 

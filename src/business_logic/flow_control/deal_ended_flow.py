@@ -1,6 +1,5 @@
 from business_logic.flow_control.flow_state import FlowState
 from api_clients.deck_card_api_client import DeckCardApiClient
-from business_logic.repositories.shoe_respository import ShoeRepository
 from logger import Logger
 from data_models.card import Card
 from data_models.player_game_info import BankerGameInfo
@@ -8,48 +7,12 @@ from singleton_manger import SingletonManager
 from exceptions.system_exception import TimeoutException
 from utils.util import Util
 from business_logic.flow_control.game_rules.hit_card_rule import HitCardRule
+from business_logic.flow_control.flow_base import FlowBase
 
 
-class DealEndedFlow:
-    def __init__(self, job_data: dict) -> None:
-        self.shoe_repository = ShoeRepository()
-        self.shoe_name = job_data['shoe_name']
-        self.round_id = job_data['round_id']
-        self.player_id = job_data['player_id']
-        self.context = {}
-    
-    def handle_flow(self) -> FlowState:
-        if not self._do_validation():
-            return FlowState.Fail_NotRetryable
-        
-        if not self._process():
-            return FlowState.Fail_NotRetryable
-
-        if self.context['is_hit_by_player']:
-            self._notify_player_to_hit_card()
-        else:
-            self.broadcast_banker_hit_card_to_clients()
-
-            current_player_game_info = self.context['current_player_game_info']
-            current_round = self.context['current_round']
-            # check if banker can hit more card or not
-            if HitCardRule(current_player_game_info).check_banker_can_hit():
-                SingletonManager.instance().job_mgr.add_notify_deal_ended_job(current_round.notify_info())
-            else:
-                SingletonManager.instance().job_mgr.add_notify_resulted_job(current_round.notify_info())
-
-    def _do_validation(self) -> bool:
-        shoe = self.shoe_repository.retrieve_shoe_model(self.shoe_name)
-        if shoe is None:
-            Logger.error("Cannot find this shoe name", self.shoe_name)
-            return False
-        
-        current_round = shoe.current_deck.current_round
-        self.context['current_round'] = current_round
-        if self.round_id != current_round.round_id:
-            Logger.error("Round id is not matched.", self.round_id, current_round.round_id)
-            return False
-        
+class DealEndedFlow(FlowBase):    
+    def _do_self_validation(self) -> bool:
+        current_round = self.context['current_round']
         if not current_round.is_deal_started():
             Logger.error("Round state is not matched", current_round.state)
             return False
@@ -73,6 +36,22 @@ class DealEndedFlow:
         if not self.context['is_hit_by_player']:
             self._handle_banker_hit_card()
             self.save_data()
+        return True
+
+    def _after_process(self) -> bool:
+        if self.context['is_hit_by_player']:
+            self._notify_player_to_hit_card()
+        else:
+            self.broadcast_banker_hit_card_to_clients()
+
+            current_player_game_info = self.context['current_player_game_info']
+            current_round = self.context['current_round']
+            # check if banker can hit more card or not
+            if HitCardRule(current_player_game_info).check_banker_can_hit():
+                SingletonManager.instance().job_mgr.add_notify_deal_ended_job(current_round.notify_info())
+            else:
+                SingletonManager.instance().job_mgr.add_notify_resulted_job(current_round.notify_info())
+        return True
 
     def _get_current_player_game_info(self) -> bool:
         current_round = self.context['current_round']
