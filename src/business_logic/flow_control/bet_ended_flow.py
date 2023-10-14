@@ -4,7 +4,7 @@ from business_logic.flow_control.flow_state import FlowState
 from business_logic.repositories.shoe_respository import ShoeRepository
 from logger import Logger
 from api.connection_manager import ConnectionManager
-from job_system.job_manager import JobManager
+from singleton_manger import SingletonManager
 
 class BetEndedFlow:
     def __init__(self, job_data: dict) -> None:
@@ -54,4 +54,4 @@ class BetEndedFlow:
 
     def create_deal_started_job(self) -> None:
         current_round = self.context['current_round']
-        JobManager.instance().add_notify_deal_started_job(current_round.notify_info())
+        SingletonManager.instance().job_mgr.add_notify_deal_started_job(current_round.notify_info())

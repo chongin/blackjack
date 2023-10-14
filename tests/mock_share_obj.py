@@ -3,6 +3,8 @@ import json
 from data_models.shoe import Shoe
 from data_models.player_profile import PlayerProfile
 
+from business_logic.repositories.shoe_respository import ShoeRepository
+from business_logic.repositories.player_profile_respository import PlayerProfileRespository
 
 class MockShareObj:
     def __init__(self) -> None:
@@ -28,3 +30,8 @@ class MockShareObj:
 
     def create_player(self, player_data):
         return PlayerProfile(player_data)
+    
+    # for easily to test, set it to firebase. TD: should change the diffenent database name
+    def save_to_firebase(self):
+        ShoeRepository().save_shoe(self.shoe)
+        PlayerProfileRespository().save_player(self.player)

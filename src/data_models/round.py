@@ -161,7 +161,7 @@ class Round:
                 return player_game_info
         return None
 
-    def get_all_player_id_have_betted(self) -> list:
+    def get_all_player_id_have_betted(self) -> list[str]:
         all_bet_player_ids = []
         for player_game_info in self.player_game_infos:
             if player_game_info.bet_options:

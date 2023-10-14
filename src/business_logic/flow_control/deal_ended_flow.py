@@ -5,10 +5,10 @@ from logger import Logger
 from data_models.card import Card
 from api.connection_manager import ConnectionManager
 from data_models.player_game_info import BankerGameInfo
-from job_system.job_manager import JobManager
+from singleton_manger import SingletonManager
 from exceptions.system_exception import TimeoutException
 from utils.util import Util
-from flow_control.game_rules.hit_card_rule import HitCardRule
+from business_logic.flow_control.game_rules.hit_card_rule import HitCardRule
 
 
 class DealEndedFlow:
@@ -35,9 +35,9 @@ class DealEndedFlow:
             current_round = self.context['current_round']
             # check if banker can hit more card or not
             if HitCardRule(current_player_game_info).check_banker_can_hit():
-                JobManager.add_notify_deal_ended_job(current_round.notify_info())
+                SingletonManager.instance().job_mgr.add_notify_deal_ended_job(current_round.notify_info())
             else:
-                JobManager.add_notify_resulted_job(current_round.notify_info())
+                SingletonManager.instance().job_mgr.add_notify_resulted_job(current_round.notify_info())
 
     def _do_validation(self) -> bool:
         shoe = self.shoe_repository.retrieve_shoe_model(self.shoe_name)

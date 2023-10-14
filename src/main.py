@@ -1,12 +1,13 @@
 from servers.http_server import HttpServer
 from servers.web_socket_server import WebSocketServer
-from job_system.job_manager import JobManager
-
+from singleton_manger import SingletonManager
+from message_factory import MessageFactory
 
 if __name__ == '__main__':
     # start job manager to handle the game flow
-    JobManager.instance().start_timer()
-
+    MessageFactory.instance()
+    SingletonManager.instance().job_mgr
+    
     # start the web server to handle cient connection for pushing message to client
     # ### WebSocketServer().run()
 

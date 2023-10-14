@@ -6,8 +6,8 @@ from data_models.card import Card
 from exceptions.system_exception import TimeoutException
 from api.connection_manager import ConnectionManager
 from data_models.player_game_info import BankerGameInfo
-from job_system.job_manager import JobManager
-from flow_control.game_rules.deal_card_rule import DealCardRule
+from singleton_manger import SingletonManager
+from business_logic.flow_control.game_rules.deal_card_rule import DealCardRule
 from utils.util import Util
 
 
@@ -148,8 +148,8 @@ class DealStartedFlow:
     def _create_next_job(self):
         current_round = self.context['current_round']
         if current_round.is_deal_started():
-            JobManager.instance().add_notify_deal_started_job(current_round.notify_info())
+            SingletonManager.instance().job_mgr.add_notify_deal_started_job(current_round.notify_info())
         else:
-            JobManager.instance().add_notify_deal_ended_job(current_round.notify_info())
+            SingletonManager.instance().job_mgr.add_notify_deal_ended_job(current_round.notify_info())
 
 

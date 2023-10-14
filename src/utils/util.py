@@ -1,11 +1,17 @@
 import os
 from datetime import datetime
+import re
 
 class Util:
     @classmethod
     def underscore_to_camelcase(cls, name: str) -> str:
         return ''.join(word.capitalize() for word in name.split('_'))
 
+    #  transform BetStarted to bet_started
+    @classmethod 
+    def camelcase_to_underscore(cls, name: str) -> str:
+        return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
+    
     @classmethod
     def get_current_directory_of_file(cls, file: str) -> str:
         current_script_path = os.path.abspath(file)

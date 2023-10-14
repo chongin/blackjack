@@ -7,7 +7,7 @@ from data_models.bet_option import BetOption, BetOptions
 from api_clients.authorization_api_client import AuthorizationApiClient
 from api_clients.wallet_api_client import WalletApiClient
 from exceptions.system_exception import *
-from job_system.job_manager import JobManager
+from singleton_manger import SingletonManager
 from data_models.player_game_info import BankerGameInfo
 
 
@@ -129,4 +129,4 @@ class BetBusinessLogic:
 
     def create_bet_started_job(self) -> None:
         current_round = self.context['current_round']
-        JobManager.instance().add_notify_bet_ended_job(current_round.notify_info())
+        SingletonManager.instance().job_mgradd_notify_bet_ended_job(current_round.notify_info())

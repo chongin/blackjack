@@ -1,6 +1,5 @@
 
 from importlib import import_module
-from typing import List
 import os
 import re
 from utils.util import Util
@@ -40,7 +39,7 @@ class MessageFactory:
                     break
         raise ValueError(f'Unknow request: {name}')
     
-    def find_message_file_name(self) -> List[str]:
+    def find_message_file_name(self) -> list[str]:
         current_directory = Util.get_current_directory_of_file(__file__)
         messages_directory = current_directory + "/api/messages"
         message_files = []

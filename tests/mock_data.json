@@ -5,7 +5,7 @@
         "player_name": "chongin",
         "state": "active",
         "wallet": {
-          "balance": 1,
+          "balance": 100,
           "total_lost": 0,
           "total_win": 0
         }

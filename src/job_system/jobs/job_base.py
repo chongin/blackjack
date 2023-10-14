@@ -21,7 +21,7 @@ class JobBase:
     def is_expire(self) -> None:
         # '2023-10-12T02:29:34'
         expired_at_datetime = datetime.strptime(self.expired_at, '%Y-%m-%dT%H:%M:%S')
-        return expired_at_datetime > datetime.utcnow()
+        return expired_at_datetime < datetime.utcnow()
 
     def _get_class_name(self) -> str:
         return self.__class__.__name__
