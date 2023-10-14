@@ -1,4 +1,4 @@
-from  controllers.base_controller import BaseController
+from api.controllers.base_controller import BaseController
 from business_logic.bet_business_logic import BetBusinessLogic
 
 

@@ -1,5 +1,5 @@
-from  controllers.base_controller import BaseController
-from business_logic.stand_business_logic import StandBusinessLogic
+from api.controllers.base_controller import BaseController
+from business_logic.hit_business_logic import HitBusinessLogic
 
 
 class HitController(BaseController):
@@ -9,7 +9,7 @@ class HitController(BaseController):
     def handle_request(self) -> dict:
         self.validate_request()
 
-        return StandBusinessLogic().handle_stand(
+        return HitBusinessLogic().handle_hit(
             self.request.table_name,
             self.request.player_name,
             self.request.round_id

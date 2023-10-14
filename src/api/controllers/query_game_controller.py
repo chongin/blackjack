@@ -1,4 +1,4 @@
-from controllers.base_controller import BaseController
+from api.controllers.base_controller import BaseController
 from api.messages.query_game_request import QueryGameRequest
 from business_logic.query_game_business_logic import QueryGameBusinessLogic
 

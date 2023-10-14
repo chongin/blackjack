@@ -2,10 +2,10 @@
 import json
 import traceback
 from exceptions.system_exception import *
-from message_factory import MessageFactory
+from api.message_factory import MessageFactory
 from api.messages.base_request import BaseRequest
-from controller_factory import ControllerFactory
-from controllers.base_controller import BaseController
+from singleton_manger import SingletonManager
+from api.controllers.base_controller import BaseController
 
 class MessageDriver:
     def __init__(self, payload):
@@ -26,9 +26,9 @@ class MessageDriver:
             return json.dumps({"error_code": 500, "error_message": error_messsage})
 
     def _build_message(self, payload) -> BaseRequest:
-        return MessageFactory.instance().create_request(
+        return SingletonManager.instance().message_factory.create_request(
             payload.get('action'), payload
         )
 
     def _build_controller(self, request) -> BaseController:
-        return ControllerFactory.instance().create_controller(request)
+        return SingletonManager.instance().control_factory.create_controller(request)

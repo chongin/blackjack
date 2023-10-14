@@ -1,4 +1,4 @@
-from controllers.base_controller import BaseController
+from api.controllers.base_controller import BaseController
 from importlib import import_module
 from typing import List
 import os
@@ -8,25 +8,13 @@ from api.messages.base_request import BaseRequest
 
 
 class ControllerFactory:
-    _instance = None
-
     def __init__(self) -> None:
-        raise RuntimeError('Call instance() instead')
-    
-    @classmethod
-    def instance(cls):
-        if cls._instance is None:
-            cls._instance = cls.__new__(cls)
-            cls._instance.__init_manual__()
-        return cls._instance
-
-    def __init_manual__(self) -> None:
         self.controller_classes = {}
         self.modules = {}
         controlller_file_names = self.find_controller_file_name()
 
         for controller_file_name in controlller_file_names:
-            module_name = f"controllers.{controller_file_name}"
+            module_name = f"api.controllers.{controller_file_name}"
             self.modules[controller_file_name] = import_module(module_name)
     
     def create_controller(self, request: BaseRequest) -> BaseController:

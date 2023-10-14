@@ -7,19 +7,7 @@ from api.messages.base_request import BaseRequest
 
 
 class MessageFactory:
-    _instance = None
-
     def __init__(self) -> None:
-        raise RuntimeError('Call instance() instead')
-    
-    @classmethod
-    def instance(cls):
-        if cls._instance is None:
-            cls._instance = cls.__new__(cls)
-            cls._instance.__init_manual__()
-        return cls._instance
-
-    def __init_manual__(self) -> None:
         self.modules = {}
         message_file_names = self.find_message_file_name()
 
@@ -41,7 +29,7 @@ class MessageFactory:
     
     def find_message_file_name(self) -> list[str]:
         current_directory = Util.get_current_directory_of_file(__file__)
-        messages_directory = current_directory + "/api/messages"
+        messages_directory = current_directory + "/messages"
         message_files = []
 
         pattern = r'.*request\.py$'

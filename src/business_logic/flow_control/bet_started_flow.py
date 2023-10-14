@@ -1,7 +1,6 @@
 from business_logic.flow_control.flow_state import FlowState
 from business_logic.repositories.shoe_respository import ShoeRepository
 from logger import Logger
-from api.connection_manager import ConnectionManager
 from singleton_manger import SingletonManager
 from data_models.player_game_info import BankerGameInfo
 from business_logic.flow_control.flow_base import FlowBase
@@ -58,7 +57,7 @@ class BetStartedFlow(FlowBase):
             'bet_started_at': current_round.bet_started_at,
             'count_down': 5  # need to calculate it TD
         })
-        ConnectionManager.instance().broadcast_message(message)
+        SingletonManager.instance().connection_mgr.broadcast_message(message)
 
     def create_bet_ended_job(self) -> None:
         current_round = self.context['current_round']

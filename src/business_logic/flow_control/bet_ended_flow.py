@@ -3,7 +3,6 @@ from data_models.round import Round
 from business_logic.flow_control.flow_state import FlowState
 from business_logic.repositories.shoe_respository import ShoeRepository
 from logger import Logger
-from api.connection_manager import ConnectionManager
 from singleton_manger import SingletonManager
 
 class BetEndedFlow:
@@ -50,7 +49,7 @@ class BetEndedFlow:
         message = {'action': 'notify_bet_closed'}
         message.update(current_round.notify_info())
         message.update({'bet_ended_at': current_round.bet_ended_at})
-        ConnectionManager.instance().broadcast_message(message)
+        SingletonManager.instance().connection_mgr.broadcast_message(message)
 
     def create_deal_started_job(self) -> None:
         current_round = self.context['current_round']

@@ -1,4 +1,7 @@
 from job_system.job_manager import JobManager
+from api.controller_factory import ControllerFactory
+from api.message_factory import MessageFactory
+from api.connection_manager import ConnectionManager
 
 class SingletonManager:
     _instance = None
@@ -15,3 +18,6 @@ class SingletonManager:
     
     def __init_manual__(self) -> None:
         self.job_mgr = JobManager()
+        self.control_factory = ControllerFactory()
+        self.message_factory = MessageFactory()
+        self.connection_mgr = ConnectionManager()

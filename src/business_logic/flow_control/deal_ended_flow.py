@@ -3,7 +3,6 @@ from api_clients.deck_card_api_client import DeckCardApiClient
 from business_logic.repositories.shoe_respository import ShoeRepository
 from logger import Logger
 from data_models.card import Card
-from api.connection_manager import ConnectionManager
 from data_models.player_game_info import BankerGameInfo
 from singleton_manger import SingletonManager
 from exceptions.system_exception import TimeoutException
@@ -114,7 +113,7 @@ class DealEndedFlow:
         message.update({
             'player_id': current_player_game_info.player_id
         })
-        ConnectionManager.instance().send_message_to_one_player(message)
+        SingletonManager.instance().connection_mgr.send_message_to_one_player(message)
     
     def _handle_banker_hit_card(self):
         # draw one card
@@ -164,4 +163,4 @@ class DealEndedFlow:
         message.update(current_round.notify_info())
         message.update({'hit_to_banker': True})
         message.update({'card': card.to_dict()})
-        ConnectionManager.instance().broadcast_message(message)
+        SingletonManager.instance().connection_mgr.broadcast_message(message)

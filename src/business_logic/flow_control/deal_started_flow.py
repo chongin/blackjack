@@ -4,7 +4,6 @@ from business_logic.repositories.shoe_respository import ShoeRepository
 from logger import Logger
 from data_models.card import Card
 from exceptions.system_exception import TimeoutException
-from api.connection_manager import ConnectionManager
 from data_models.player_game_info import BankerGameInfo
 from singleton_manger import SingletonManager
 from business_logic.flow_control.game_rules.deal_card_rule import DealCardRule
@@ -143,7 +142,7 @@ class DealStartedFlow:
         message.update(current_round.notify_info())
         message.update({'deal_to_player': current_player_game_info.player_id})
         message.update({'card': card.to_dict()})
-        ConnectionManager.instance().broadcast_message(message)
+        SingletonManager.instance().connection_mgr.broadcast_message(message)
 
     def _create_next_job(self):
         current_round = self.context['current_round']
