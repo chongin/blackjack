@@ -8,7 +8,7 @@ from api_clients.authorization_api_client import AuthorizationApiClient
 from api_clients.wallet_api_client import WalletApiClient
 from exceptions.system_exception import *
 from job_system.job_manager import JobManager
-from api.connection_manager import ConnectionManager
+from data_models.player_game_info import BankerGameInfo
 
 
 class BetBusinessLogic:
@@ -19,13 +19,15 @@ class BetBusinessLogic:
     
     def handle_bet(self, shoe_name: str, player_name: str, round_id: str,
                    bet_options_req: BetOptionsReq) -> dict:
-        
+        self.context['bet_options_req'] = bet_options_req
         self._do_validation(shoe_name, player_name, round_id, bet_options_req)
-        self._process(bet_options_req)
-        self._after_process()
-        return self._compose_result()
-       
+        self._process()
         
+        need_notify = self.context['need_notify']
+        if need_notify:
+            self.create_bet_started_job()
+        return self._compose_result()
+
     def _do_validation(self, shoe_name: str, player_name: str, round_id: str,
                        bet_options_req: BetOptionsReq) -> None:
         # authen player:
@@ -62,10 +64,16 @@ class BetBusinessLogic:
         })
         
     def _process(self, bet_options_req: BetOptionsReq) -> None:
+        self._add_bet_options_to_player_game_info()
+        self._calculate_player_balance()
+        self._update_round_status_to_bet_started()
+        self._create_deal_and_hit_card_sequence()
+        self._save_data()
+        
+    def _add_bet_options_to_player_game_info(self) -> None:
         current_round = self.context['current_round']
         player_profile = self.context['player_profile']
-        shoe = self.context['shoe']
-        total_bet_amt = self.context['total_bet_amt']
+        bet_options_req = self.context['bet_options_req']
 
         # add data to data model object
         bet_options = BetOptions([])
@@ -89,32 +97,55 @@ class BetBusinessLogic:
             for bet_option in bet_options:
                 player_game_info.bet_options.append(bet_option)
 
-        # calculate player balance
-        player_profile.deduct_balance(total_bet_amt)
+    def _calculate_player_balance(self) -> None:
+        player_profile = self.context['player_profile']
+        total_bet_amt = self.context['total_bet_amt']
 
+        player_profile.deduct_balance(total_bet_amt)
         # call wallet api to deduct balance
         WalletApiClient().withdraw({
             'total_bet_amt': total_bet_amt,
             'player_id': player_profile.player_id
         })
 
-        # update round status
+    def _update_round_status_to_bet_started(self) -> None:
+        current_round = self.context['current_round']
         if current_round.is_opened():
             current_round.set_bet_started()
             self.context['need_notify'] = True
         else:
             self.context['need_notify'] = False
 
-        # save data to db
+    def _create_deal_and_hit_card_sequence(self):
+        need_notify = self.context['need_notify']
+        if not need_notify:
+            return
+        
+        current_round = self.context['current_round']
+        bet_player_game_infos = current_round.get_all_player_id_have_betted()
+        if len(bet_player_game_infos) == 0:
+            raise DataInvalidException("Cannot find any player have betted, player bet data is wrong.")
+        
+        deal_card_sequences = []
+        for i in range(2):
+            for player_game_info in bet_player_game_infos:
+                deal_card_sequences.append(player_game_info.player_id)
+            
+            deal_card_sequences.append(BankerGameInfo.BANKER_ID)
+
+        hit_card_sequences = []
+        for player_game_info in bet_player_game_infos:
+            hit_card_sequences.append(player_game_info.player_id)
+        hit_card_sequences.append(BankerGameInfo.BANKER_ID)
+
+        current_round.deal_card_sequences = deal_card_sequences
+        current_round.hit_card_sequences = hit_card_sequences
+        
+    def _save_data(self):
+        shoe = self.context['shoe']
+        player_profile = self.context['player_profile']
         self.shoe_repository.save_shoe(shoe)
         self.player_profile_respository.save_player(player_profile)
-
-    def _after_process(self) -> None:
-        need_notify = self.context['need_notify']
-        current_round = self.context['current_round']
-        if need_notify:
-            self._broadcast_message_to_clients(current_round)
-            self.create_next_job(current_round)
 
     # conver data to client
     def _compose_result(self) -> dict:
@@ -122,13 +153,6 @@ class BetBusinessLogic:
         player_profile = self.context['player_profile']
         return BetDomainModel(shoe, player_profile).to_dict()
 
-    # broadcase message through websocket
-    def _broadcast_message_to_clients(self, current_round) -> None:
-        message = {'action': 'notify_bet_started'}
-        message.update(current_round.notify_info())
-        message.update({'bet_started_at': current_round.bet_started_at})
-        ConnectionManager.instance().broadcast_message(message)
-
-    # createa next flow control job
-    def create_next_job(self, current_round) -> None:
+    def create_bet_started_job(self) -> None:
+        current_round = self.context['current_round']
         JobManager.instance().add_notify_bet_ended_job(current_round.notify_info())

@@ -21,16 +21,22 @@ class DealStartedFlow:
         if not self._do_validation():
             return FlowState.Fail_NotRetryable
 
-        self._process()
-        self._after_process()
+        if not self._process():
+            return self.context['flow_state']
+        
+        self._broadcast_messages_to_clients()
+        self._create_next_job()
 
-    def _process(self) -> FlowState:
-        api_re = self.draw_one_card_from_server()
-        if api_re != FlowState.Success:
-            return api_re
+        return FlowState.Success
+    
+
+    def _process(self) -> bool:
+        if not self.draw_one_card_from_server():
+            return False
 
         self.assign_card_to_current_player_game_info()
         self._pop_up_current_player_id_from_deal_card_sequences()
+        self._update_round_state()
         self._save_data
 
     def _do_validation(self) -> bool:
@@ -64,6 +70,7 @@ class DealStartedFlow:
         else:
             # this is deal to banker, so get the banker game info
             self.context['current_player_game_info'] = round.banker_game_info
+
         self.context['current_round'] = current_round
         return True
     
@@ -73,10 +80,12 @@ class DealStartedFlow:
             card_detail = DeckCardApiClient().draw_one_card(current_round.deck.deck_api_id)
         except TimeoutException as ex:
             Logger.error(f"Call draw card api has timeout exception, error: {str(ex)}")
-            return FlowState.Fail_Retryable
+            self.context['flow_state'] = FlowState.Fail_Retryable
+            return False
         except Exception as ex:
             Logger.error(f"Call draw card api exception, error: {str(ex)}")
-            return FlowState.Fail_NotRetryable
+            self.context['flow_state'] = FlowState.Fail_NotRetryable
+            return True
         
         card = Card({
             'code': card_detail.code,
@@ -85,7 +94,7 @@ class DealStartedFlow:
         })
 
         self.context['card'] = card
-        return FlowState.Success
+        return True
     
     def assign_card_to_current_player_game_info(self) -> None:
         current_player_game_info = self.context['current_player_game_info']
@@ -129,4 +138,4 @@ class DealStartedFlow:
         if current_round.is_deal_started():
             current_round = self.context['current_round']
         else:
-            
+

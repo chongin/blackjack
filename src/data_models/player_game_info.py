@@ -36,6 +36,7 @@ class PlayerGameInfos(PlayerGameInfos):
 
 #Banker only have one
 class BankerGameInfo:
+    BANKER_ID = 'banker'
     def __init__(self, data: dict) -> None:
         self.first_two_cards = Cards(data['first_two_cards']) if data.get('first_two_cards') else Cards([])
         self.hit_cards = Cards(data['hit_cards']) if data.get('hit_cards') else Cards([])

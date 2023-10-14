@@ -6,6 +6,7 @@ from exceptions.system_exception import NotFoundException
 from job_system.jobs.job_base import JobBase
 from configuration.system_config import SystemConfig
 from utils.util import Util
+from logger import Logger
 
 
 class JobManager:
@@ -27,22 +28,34 @@ class JobManager:
         self.mutex = threading.Lock()
         pass
     
+    def add_notify_bet_started_job(self, job_data: dict) -> bool:
+        return self._add_job('NotifyBetStarted', job_data)
+
     def add_notify_bet_ended_job(self, job_data: dict) -> bool:
-        print('add_notify_bet_ended_job', job_data)
         return self._add_job('NotifyBetEnded', job_data)
     
+    def add_notify_deal_started_job(self, job_data: dict) -> bool:
+        return self._add_job('NotifyDealStarted', job_data)
+
+    def add_notify_deal_ended_job(self, job_data: dict) -> bool:
+        return self._add_job('NotifyDealEnded', job_data)
+    
     def add_notify_closed_job(self, job_data: dict) -> bool:
-        print('add_notify_closed_job', job_data)
         return self._add_job('NotifyClosedEnded', job_data)
 
     def add_notify_nex_round_opened_job(self, job_data: dict) -> bool:
-        print('add_notify_nex_round_opened_job', job_data)
         return self._add_job('NotifyNextRoundOpened', job_data)
     
     def _add_job(self, job_type: str, job_data: dict) -> bool:
         job = None
-        if job_type == 'NotifyBetEnded':
+        if job_type == 'NotifyBetStarted':
+            job = NotifyBetStartedJob(job_data)
+        elif job_type == 'NotifyBetEnded':
             job = NotifyBetEndedJob(job_data)
+        elif job_type == 'NotifyDealStarted':
+            job = NotifyDealStartedJob(job_data)
+        elif job_type == 'NotifyDealEnded':
+            job = NotifyDealEndedJob(job_data)
         elif job_type == 'NotifyClosedEnded':
             job = NotifyClosedEndedJob(job_data)
         elif job_type == 'NotifyNextRoundOpened':
@@ -50,6 +63,7 @@ class JobManager:
         else:
             raise NotFoundException(f"Cannot find this job type: {job_type}")
         
+        Logger.debug("Add a job to job system.", job.to_dict())
         self.mutex.acquire()
         self.jobs.add(job)
         self.mutex.release()

@@ -72,4 +72,9 @@ class RequestUnhandleException(SystemException):
 class StateMachineException(SystemException):
     def __init__(self,  err_message):
         super().__init__(400, err_message)
+
+
+class DataInvalidException(SystemException):
+    def __init__(self,  err_message):
+        super().__init__(400, err_message)
 # Backend exception ended.
