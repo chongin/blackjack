@@ -7,7 +7,7 @@ from api.connection_manager import ConnectionManager
 from data_models.player_game_info import BankerGameInfo
 from job_system.job_manager import JobManager
 from exceptions.system_exception import TimeoutException
-
+from utils.util import Util
 
 class DealEndedFlow:
     def __init__(self, job_data: dict) -> None:
@@ -95,7 +95,8 @@ class DealEndedFlow:
         card = Card({
             'code': card_detail.code,
             'value': card_detail.value,
-            'suit': card_detail.suit
+            'suit': card_detail.suit,
+            'received_at': Util.current_utc_time()
         })
 
         self.context['card'] = card

@@ -27,11 +27,29 @@ class PlayerGameInfo:
 
     def total_point(self):
         sum = 0
+        ace_sum = 0
         for card in self.first_two_cards:
-            
+            sum += card.point()
+            ace_sum += card.ace_point()
+        
+        for card in self.hit_cards:
+            sum += card.point()
+            ace_sum += card.ace_point()
+
+        if sum < ace_sum:
+            if ace_sum <= 21:
+                return ace_sum
+            else:
+                return sum
+        else:
+            if sum <= 21:
+                return sum
+            else:
+                return ace_sum
 
     def is_bust(self):
         self.total_point() > 21
+
 
 class PlayerGameInfos(list):
     def __init__(self, datalist: list):
