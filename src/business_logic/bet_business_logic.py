@@ -67,7 +67,6 @@ class BetBusinessLogic:
         self._add_bet_options_to_player_game_info()
         self._calculate_player_balance()
         self._update_round_status_to_bet_started()
-        self._create_deal_and_hit_card_sequence()
         self._save_data()
         
     def _add_bet_options_to_player_game_info(self) -> None:
@@ -115,33 +114,8 @@ class BetBusinessLogic:
             self.context['need_notify'] = True
         else:
             self.context['need_notify'] = False
-
-    def _create_deal_and_hit_card_sequence(self):
-        need_notify = self.context['need_notify']
-        if not need_notify:
-            return
-        
-        current_round = self.context['current_round']
-        bet_player_game_infos = current_round.get_all_player_id_have_betted()
-        if len(bet_player_game_infos) == 0:
-            raise DataInvalidException("Cannot find any player have betted, player bet data is wrong.")
-        
-        deal_card_sequences = []
-        for i in range(2):
-            for player_game_info in bet_player_game_infos:
-                deal_card_sequences.append(player_game_info.player_id)
-            
-            deal_card_sequences.append(BankerGameInfo.BANKER_ID)
-
-        hit_card_sequences = []
-        for player_game_info in bet_player_game_infos:
-            hit_card_sequences.append(player_game_info.player_id)
-        hit_card_sequences.append(BankerGameInfo.BANKER_ID)
-
-        current_round.deal_card_sequences = deal_card_sequences
-        current_round.hit_card_sequences = hit_card_sequences
-        
-    def _save_data(self):
+    
+    def _save_data(self) -> None:
         shoe = self.context['shoe']
         player_profile = self.context['player_profile']
         self.shoe_repository.save_shoe(shoe)

@@ -23,5 +23,6 @@ class ConnectionManager:
         Logger.info("Broadcase message success", data)
         return True
     
-
-
+    def send_message_to_one_player(self, data: dict) -> bool:
+        Logger.info("send_message_to_one_player success", data)
+        return True

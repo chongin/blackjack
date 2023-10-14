@@ -5,6 +5,8 @@ from logger import Logger
 from data_models.card import Card
 from exceptions.system_exception import TimeoutException
 from api.connection_manager import ConnectionManager
+from data_models.player_game_info import BankerGameInfo
+from job_system.job_manager import JobManager
 
 
 class DealStartedFlow:
@@ -15,22 +17,22 @@ class DealStartedFlow:
         self.player_id = job_data['player_id']
         self.context = {}
     
-    def handle_deal_started(self) -> FlowState:
-        # call api to draw card
-        # update round state
+    def handle_flow(self) -> FlowState:
         if not self._do_validation():
             return FlowState.Fail_NotRetryable
 
         if not self._process():
-            return self.context['flow_state']
+            return self.context['flow_state'] if self.context.get('flow_state') else FlowState.Fail_NotRetryable
         
         self._broadcast_messages_to_clients()
         self._create_next_job()
 
         return FlowState.Success
     
-
     def _process(self) -> bool:
+        if not self._get_current_player_game_info():
+            return False
+        
         if not self.draw_one_card_from_server():
             return False
 
@@ -38,6 +40,7 @@ class DealStartedFlow:
         self._pop_up_current_player_id_from_deal_card_sequences()
         self._update_round_state()
         self._save_data
+        return True
 
     def _do_validation(self) -> bool:
         shoe = self.shoe_repository.retrieve_shoe_model(self.shoe_name)
@@ -46,6 +49,7 @@ class DealStartedFlow:
             return False
         
         current_round = shoe.current_deck.current_round
+        self.context['current_round'] = current_round
         if self.round_id != current_round.round_id:
             Logger.error("Round id is not matched.", self.round_id, current_round.round_id)
             return False
@@ -58,20 +62,6 @@ class DealStartedFlow:
             Logger.error("There is no player or banker need to deal card.")
             return False
         
-        # get current player id from the records
-        current_player_id = current_round.deal_card_sequences[0]
-        if current_player_id != 'banker':
-            # this is deal to player, so get the player game info
-            current_player_game_info = round.find_player_game_info_by_player_id(current_player_id)
-            if current_player_game_info == None:
-                Logger.error("Cannot find the current player game info.", current_player_id)
-                return False
-            self.context['current_player_game_info'] = current_player_game_info
-        else:
-            # this is deal to banker, so get the banker game info
-            self.context['current_player_game_info'] = round.banker_game_info
-
-        self.context['current_round'] = current_round
         return True
     
     def draw_one_card_from_server(self) -> bool:
@@ -84,8 +74,7 @@ class DealStartedFlow:
             return False
         except Exception as ex:
             Logger.error(f"Call draw card api exception, error: {str(ex)}")
-            self.context['flow_state'] = FlowState.Fail_NotRetryable
-            return True
+            return False
         
         card = Card({
             'code': card_detail.code,
@@ -94,6 +83,22 @@ class DealStartedFlow:
         })
 
         self.context['card'] = card
+        return True
+    
+    def _get_current_player_game_info(self) -> bool:
+        current_round = self.context['current_round']
+        # get current player id from the records
+        current_player_id = current_round.deal_card_sequences[0]
+        if current_player_id != BankerGameInfo.BANKER_ID:
+            # this is deal to player, so get the player game info
+            current_player_game_info = current_round.find_player_game_info_by_player_id(current_player_id)
+            if not current_player_game_info:
+                Logger.error("Cannot find the current player game info.", current_player_id)
+                return False
+            self.context['current_player_game_info'] = current_player_game_info
+        else:
+            # this is deal to banker, so get the banker game info
+            self.context['current_player_game_info'] = current_round.banker_game_info
         return True
     
     def assign_card_to_current_player_game_info(self) -> None:
@@ -132,10 +137,11 @@ class DealStartedFlow:
         message.update({'card': card.to_dict()})
         ConnectionManager.instance().broadcast_message(message)
 
-
     def _create_next_job(self):
         current_round = self.context['current_round']
         if current_round.is_deal_started():
-            current_round = self.context['current_round']
+            JobManager.instance().add_notify_deal_started_job(current_round.notify_info())
         else:
+            JobManager.instance().add_notify_deal_ended_job(current_round.notify_info())
+
 

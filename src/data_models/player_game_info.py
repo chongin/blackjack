@@ -17,10 +17,21 @@ class PlayerGameInfo:
             'first_two_cards': self.first_two_cards.to_list(),
             'hit_cards': self.hit_cards.to_list(),
             'bet_options': self.bet_options.to_list(),
+            'total_point': self.total_point(),
             'is_stand': self.is_stand,
             'result': self.result
         }
 
+    def can_hit(self):
+        return len(self.first_two_cards) == 2 and not self.is_bust()
+
+    def total_point(self):
+        sum = 0
+        for card in self.first_two_cards:
+            
+
+    def is_bust(self):
+        self.total_point() > 21
 
 class PlayerGameInfos(list):
     def __init__(self, datalist: list):

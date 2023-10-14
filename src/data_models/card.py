@@ -1,13 +1,10 @@
-from data_models.base_model import BaseModel
-
-
 class Card:
+    
     def __init__(self, data: dict) -> None:
         self.code = data['card_code']
         self.value = data['value']
         self.suit = data['suit']
         self.received_at = data['received_at']
-        
 
     def to_dict(self) -> dict:
         return {
@@ -16,6 +13,10 @@ class Card:
             'suit': self.suit,
             'received_at': self.received_at,
         }
+
+    def point(self) -> int:
+        pass
+    
 
 
 class Cards(list):
