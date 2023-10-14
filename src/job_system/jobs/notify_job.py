@@ -4,53 +4,41 @@ from configuration.system_config import SystemConfig
 
 class NotifyBetStartedJob(JobBase):
     def __init__(self, data: dict) -> None:
-        super().__init__(data.update({
-            "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
-        }))
+        super().__init__(data)
 
-        self.bet_started_at = data['started_at']
+        self.bet_started_at = data['bet_started_at']
+
+    def to_dict(self):
+        hash = super().to_dict()
+        hash.update({'bet_started_at': self.bet_started_at})
+        return hash
 
 
 class NotifyBetEndedJob(JobBase):
     def __init__(self, data: dict) -> None:
-        super().__init__(data.update({
-            "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
-        }))
+        super().__init__(data)
 
-        self.bet_started_at = data['started_at']
 
 class NotifyDealStartedJob(JobBase):
     def __init__(self, data: dict) -> None:
-        super().__init__(data.update({
-            "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
-        }))
-
-        self.player_id = data['player_id']
+        super().__init__(data)
 
 
 class NotifyDealEndedJob(JobBase):
     def __init__(self, data: dict) -> None:
-        super().__init__(data.update({
-            "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
-        }))
+        super().__init__(data)
+
 
 class NotifyResultedJob(JobBase):
     def __init__(self, data: dict) -> None:
-        super().__init__(data.update({
-            "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
-        }))
+        super().__init__(data)
+
 
 class NotifyClosedEndedJob(JobBase):
     def __init__(self, data: dict) -> None:
-        super().__init__(data.update({
-            "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
-        }))
+        super().__init__(data)
 
 
 class NotifyNextRoundOpened(JobBase):
     def __init__(self, data: dict) -> None:
-        super().__init__(data.update({
-            "live_period_in_secondss": SystemConfig.get_job_timeout_in_seconds(self._get_class_name())
-        }))
-
-
+        super().__init__(data)

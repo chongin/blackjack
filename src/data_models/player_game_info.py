@@ -73,6 +73,6 @@ class BankerGameInfo(PlayerGameInfo):
 
     def to_dict(self) -> dict:
         hash = super().to_dict()
-        # hash.remove('player_id')
+        hash.remove('player_id')
         hash.remove('bet_options')
         return hash

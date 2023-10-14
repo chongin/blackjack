@@ -12,7 +12,7 @@ class SystemConfig:
         return cls._instance
 
     def __init_manual__(self) -> None:
-        # game config
+        # game config, was determined by business
         self.number_of_decks = 8
         self.number_of_top_winners = 5
         self.bet_option_names = ['base_win', 'pair', 'insurence']
@@ -20,16 +20,19 @@ class SystemConfig:
 
         # system internal config
         self.support_game_mode = ['single_player', 'multi_player']
-        self.check_job_timeout_interval_in_seconds = 1
+        self.check_job_timeout_interval_in_milliseconds = 500
         self.currency = 'CAD'
-   
-    def job_timeout_in_seconds_config(self) -> None:
+        self._init_job_timeout_in_milliseconds()
+
+    def _init_job_timeout_in_milliseconds(self) -> None:
         self.job_timeouts = {
-            'NotifyBetEndedJob': 1,
-            'NotifyClosedJob': 3,
-            'NotifyNextRoundStartedJob': 1,
-            'NotifyDealStartedJob': 1,
+            'NotifyBetStartedJob': 500,
+            'NotifyBetEndedJob': 3000,
+            'NotifyDealStartedJob': 500,
+            'NotifyDealEndedJob': 500,
+            'NotifyClosedJob': 2000,
+            'NotifyNextRoundStartedJob': 1000,
         }
 
-    def get_job_timeout_in_seconds(self, job_name: str) -> int:
-        return self.job_timeouts['job_name']
+    def get_job_timeout_in_milliseconds(self, job_name: str) -> int:
+        return self.job_timeouts[job_name]

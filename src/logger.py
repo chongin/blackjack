@@ -1,5 +1,7 @@
 import logging
 
+# output print or logging
+GLOABLE_OUTPUT_PRINT = True
 
 class Logger:
     _instance = None
@@ -61,4 +63,9 @@ class Logger:
         log_message = message
         if args:
             log_message += ', ' + ', '.join(map(str, args))
-        self.logger.log(log_level, log_message)
+        
+        global GLOABLE_OUTPUT_PRINT
+        if not GLOABLE_OUTPUT_PRINT:
+            self.logger.log(log_level, log_message)
+        else:
+            print(f"{log_level}: {log_message}")

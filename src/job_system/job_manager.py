@@ -23,10 +23,10 @@ class JobManager:
         return cls._instance
 
     def __init_manual__(self):
-        self.excution_interval = SystemConfig.instance().check_job_timeout_interval_in_seconds
+        self.excution_interval = SystemConfig.instance().check_job_timeout_interval_in_milliseconds / 1000
+
         self.jobs = []
         self.mutex = threading.Lock()
-        pass
     
     def add_notify_bet_started_job(self, job_data: dict) -> bool:
         return self._add_job('NotifyBetStarted', job_data)
@@ -70,7 +70,7 @@ class JobManager:
         
         Logger.debug("Add a job to job system.", job.to_dict())
         self.mutex.acquire()
-        self.jobs.add(job)
+        self.jobs.append(job)
         self.mutex.release()
         
         return True
@@ -80,7 +80,7 @@ class JobManager:
     
     def start_timer(self):
         self.timer_task = concurrent.futures.ThreadPoolExecutor(max_workers=1)
-        # self.timer_task.submit(self.execute_timer)
+        self.timer_task.submit(self.execute_timer)
         
     def execute_timer(self):
         while self.running():
@@ -96,7 +96,6 @@ class JobManager:
 
     def retrieve_timeout_jobs(self):
         timeout_jobs = []
-
         self.mutex.acquire()
         for job in self.jobs:
             if job.is_expire():
@@ -111,8 +110,7 @@ class JobManager:
         return timeout_jobs
 
     def handle_timeout_jobs(self, timeout_jobs: list[JobBase]):
-        # to find the control and handle it.
-        # should update round state and brocast to all clients
-        pass
+        for timeout_job in timeout_jobs:
+            pass
 
     
