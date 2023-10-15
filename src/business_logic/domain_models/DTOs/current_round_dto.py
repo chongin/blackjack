@@ -13,14 +13,6 @@ class CurrentRoundDTO:
         self.hand = round.hand
         self.player_game_infos = PlayerGameInfosDTO.from_data_model(round.player_game_infos)
         self.banker_game_info = BankerGameInfoDTO.from_data_model(round.banker_game_info)
-            
-
-        # only have one banker, so change it to dict
-        if len(self.banker_game_info) > 0:
-            self.banker_game_info = self.banker_game_info[0]
-        else:
-            self.banker_game_info = {}
-
         self.has_black_card = round.has_black_card
 
     def to_dict(self) -> dict:
@@ -28,26 +20,16 @@ class CurrentRoundDTO:
             "round_id": self.round_id,
             "state": self.state,
             "hand": self.hand,
-            "has_black_card": self.has_black_card
+            "has_black_card": self.has_black_card,
+            "player_game_infos": self.player_game_infos.to_list(),
+            "banker_game_info": self.banker_game_info.to_dict()
         }
-
-        # it should be call filter_by_player_id first.
-        if type(self.player_game_infos) is dict:
-            hash["player_game_infos"] = {}
-        else:
-            hash["player_game_infos"] = self.player_game_infos.to_dict()
-        
-        # it should be call filter_by_player_id first.
-        if type(self.banker_game_info) is dict:
-            hash["banker_game_info"] = {}
-        else:
-            hash["banker_game_info"] = self.banker_game_info.to_dict()
-
         return hash
 
     def filter_by_player_id(self, player_id: str) -> None:
+        current_player_info = []
         for player_game_info in self.player_game_infos:
             if player_game_info.player_id == player_id:
-                self.player_game_infos = player_game_info
+                current_player_info.append(player_game_info)
                 return
-        self.player_game_infos = {}
+        self.player_game_infos = current_player_info

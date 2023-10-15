@@ -1,0 +1,22 @@
+{
+    "tables": [
+        {
+            "name": "table1",
+            "play_mode": "signle_player",
+            "chips": [1, 5, 10, 25, 50],
+            "betting_countdown": 3
+        },
+        {
+            "name": "Test",
+            "play_mode": "signle_player",
+            "chips": [1, 5, 10, 25, 50],
+            "betting_countdown": 3
+        },
+        {
+            "name": "IoT1012",
+            "play_mode": "multi_players",
+            "chips": [1, 5, 10, 25, 50],
+            "betting_countdown": 30
+        }
+    ]
+}

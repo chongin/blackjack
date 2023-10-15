@@ -4,24 +4,20 @@ from data_models.card import Card, Cards
 class CardDTO:
     @classmethod
     def from_data_model(cls, card: Card) -> 'CardDTO':
-        return cls(
-            card_code=card.player_id,
-            suit=card.player_name,
-            value=card.value
-        )
+        return cls(card)
 
-    def __init__(self, card_code: str, suit: str, value: str) -> None:
-        self.card_code = card_code
-        self.suit = suit
-        self.value = value
+    def __init__(self, card: Card) -> None:
+        self.code = card.code
+        self.suit = card.suit
+        self.value = card.value
         self.image_url = self._compose_image_url()
 
     def _compose_image_url(self) -> str:
-        return f"https://deckofcardsapi.com/static/img/{self.car_code}.png"
+        return f"https://deckofcardsapi.com/static/img/{self.code}.png"
 
     def to_dict(self) -> dict:
         return {
-            "card_code": self.card_code,
+            "code": self.code,
             "suit": self.suit,
             "value": self.value,
             "image_url": self.image_url

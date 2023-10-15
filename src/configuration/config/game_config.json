@@ -1,0 +1,17 @@
+{
+    "number_of_decks": 8,
+    "number_of_top_winners": 5,
+    "bet_option_names": [
+        "base_win", 
+        "pair", 
+        "insurence",
+        "double_down"
+    ],
+    "odds": {
+        "base_game": 1,
+        "blackjack": 2,
+        "pair": 8,
+        "double_down": 2,
+        "insurence": 0.5
+    }
+}

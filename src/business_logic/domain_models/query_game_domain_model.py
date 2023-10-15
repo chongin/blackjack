@@ -10,8 +10,6 @@ class QueryGameDomainModel:
         self.config = shoe.config.to_dict()
         self.player_profile_dto = PlayerProfileDTO.from_data_model(player_profile)
         self.current_round_dto = CurrentRoundDTO.from_data_model(shoe.current_deck.current_round)
-        # it is important to filter current player data
-        self.current_round_dto.filter_by_player_id(self.player_profile_dto.player_id)
         self.top_winners_dto = TopWinnersDTO.from_data_model(top_winners)
 
     def to_dict(self) -> dict:

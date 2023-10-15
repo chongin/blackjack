@@ -22,7 +22,8 @@
             50
           ],
           "number_of_decks": 8,
-          "player_mode": "single"
+          "play_mode": "signle_player",
+          "betting_countdown": 3
         },
         "current_deck": {
           "black_card_postion": 353,

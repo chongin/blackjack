@@ -12,7 +12,7 @@ from job_system.load_flow_modules import LoadFlowModules
 
 class JobManager:
     def __init__(self) -> None:
-        self.excution_interval = SystemConfig.instance().check_job_timeout_interval_in_milliseconds / 1000
+        self.excution_interval = SystemConfig.instance().system_config['check_job_timeout_interval_in_millisec'] / 1000
         self.jobs = []
         self.mutex = threading.Lock()
         self.load_flow_modules = LoadFlowModules()

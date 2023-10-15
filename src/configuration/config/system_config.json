@@ -1,0 +1,17 @@
+{
+    "game_mode": [
+        "single_player", 
+        "multi_players"
+    ],
+    "currency": "CAD",
+    "job_timeouts_in_millisec": {
+        "NotifyBetStartedJob": 500,
+        "NotifyBetEndedJob": 3000,
+        "NotifyDealStartedJob": 500,
+        "NotifyDealEndedJob": 500,
+        "NotifyResultedJob": 500,
+        "NotifyClosedJob": 2000,
+        "NotifyNextRoundStartedJob": 1000
+    },
+    "check_job_timeout_interval_in_millisec": 500
+}

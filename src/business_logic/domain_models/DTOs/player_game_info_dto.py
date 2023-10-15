@@ -15,6 +15,7 @@ class PlayerGameInfoDTO:
         self.hit_cards = CardsDto.from_data_model(player_game_info.hit_cards)
         self.is_stand = player_game_info.is_stand
         self.bet_options = BetOptionsDTO.from_data_model(player_game_info.bet_options)
+        self.total_point = player_game_info.total_point()
         self.result = player_game_info.result
 
     def to_dict(self) -> dict:
@@ -23,6 +24,7 @@ class PlayerGameInfoDTO:
             "first_two_cards": self.first_two_cards.to_list(),
             "hit_cards": self.hit_cards.to_list(),
             "is_stand": self.is_stand,
+            "total_point": self.total_point,
             "bet_options": self.bet_options.to_list(),
             "result": self.result
         }

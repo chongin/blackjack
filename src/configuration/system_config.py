@@ -1,3 +1,7 @@
+import os
+import json
+from business_logic.repositories.shoe_respository import ShoeRepository
+
 class SystemConfig:
     _instance = None
 
@@ -12,28 +16,40 @@ class SystemConfig:
         return cls._instance
 
     def __init_manual__(self) -> None:
-        # game config, was determined by business
-        self.number_of_decks = 8
-        self.number_of_top_winners = 5
-        self.bet_option_names = ['base_win', 'pair', 'insurence']
-        self.odds = {'base_game': 1, 'blackjack': 2, 'pair': 3}
+        current_script_path = os.path.abspath(__file__)
+        current_directory = os.path.dirname(current_script_path)
+        self.folder_path = f"{current_directory}/config"
+        self._init_game_config()
+        self._init_table_config()
+        self._init_system_config()
+    
+    def _init_game_config(self) -> None:
+        full_path = f"{self.folder_path}/game_config.json"
+        with open(full_path, "r") as json_file:
+            self.game_config = json.load(json_file)
 
-        # system internal config
-        self.support_game_mode = ['single_player', 'multi_player']
-        self.check_job_timeout_interval_in_milliseconds = 500
-        self.currency = 'CAD'
-        self._init_job_timeout_in_milliseconds()
+    def _init_table_config(self) -> None:
+        full_path = f"{self.folder_path}/table_config.json"
+        with open(full_path, "r") as json_file:
+            self.table_config = json.load(json_file)
 
-    def _init_job_timeout_in_milliseconds(self) -> None:
-        self.job_timeouts = {
-            'NotifyBetStartedJob': 500,
-            'NotifyBetEndedJob': 3000,
-            'NotifyDealStartedJob': 500,
-            'NotifyDealEndedJob': 500,
-            'NotifyResultedJob': 500,
-            'NotifyClosedJob': 2000,
-            'NotifyNextRoundStartedJob': 1000,
-        }
+    def _init_system_config(self) -> None:
+        full_path = f"{self.folder_path}/system_config.json"
+        with open(full_path, "r") as json_file:
+            self.system_config = json.load(json_file)
 
     def get_job_timeout_in_milliseconds(self, job_name: str) -> int:
-        return self.job_timeouts[job_name]
+        return self.system_config['job_timeouts_in_millisec'][job_name]
+    
+    def set_tables(self) -> bool:
+        number_of_decks = self.game_config['number_of_decks']
+        for table in self.table_config['tables']:
+            shoe = ShoeRepository().create_shoe_model(
+                table['name'],
+                number_of_decks,
+                table['chips'],
+                table['play_mode'],
+                table['betting_countdown']
+            )
+
+            ShoeRepository().save_shoe(shoe)

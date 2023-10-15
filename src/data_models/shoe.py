@@ -4,17 +4,20 @@ from data_models.deck import Deck
 from data_models.deck_histories import DeckHistories
 from ulid import ULID
 
+
 class ShoeConfig:
     def __init__(self, data) -> None:
         self.number_of_decks = data['number_of_decks']
         self.chips = data['chips']
-        self.player_mode = data['player_mode']
+        self.player_mode = data['play_mode']
+        self.betting_countdown = data['betting_countdown']
 
     def to_dict(self) -> dict:
         return {
             'number_of_decks': self.number_of_decks,
             'chips': self.chips,
-            'player_mode': self.player_mode,
+            'play_mode': self.player_mode,
+            "betting_countdown": self.betting_countdown
         }
 
 
@@ -29,15 +32,17 @@ class Shoe:
     
     @classmethod
     def new_model(cls, name: str, deck_api_id: str,
-                  number_of_decks: int) -> 'Shoe':
+                  number_of_decks: int, chips: list[int],
+                  play_mode: str, betting_countdown: int) -> 'Shoe':
         shoe_hash = {
             'shoe_id': str(ULID()),
             'shoe_name': name,
             'shuffer_count': 0,
             'config': {
                 "number_of_decks": number_of_decks,
-                "chips": [1, 5, 10, 25, 50],
-                "player_mode": "single"
+                "chips": chips,
+                "play_mode": play_mode,
+                "betting_countdown": betting_countdown
             },
             'deck_api_id': deck_api_id,
             'state': 'active',
