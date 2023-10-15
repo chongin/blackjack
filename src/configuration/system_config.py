@@ -30,6 +30,7 @@ class SystemConfig:
             'NotifyBetEndedJob': 3000,
             'NotifyDealStartedJob': 500,
             'NotifyDealEndedJob': 500,
+            'NotifyResultedJob': 500,
             'NotifyClosedJob': 2000,
             'NotifyNextRoundStartedJob': 1000,
         }

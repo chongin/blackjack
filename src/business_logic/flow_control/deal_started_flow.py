@@ -96,7 +96,7 @@ class DealStartedFlow(FlowBase):
         # pop up this player id from the deal_card_sequences
         current_round = self.context['current_round']
         pop_player_id = current_round.deal_card_sequences.pop(0)
-        Logger.debug("Pop up player_id", pop_player_id)
+        Logger.debug("Pop up player_id from deal card sequence", pop_player_id)
         
     def _update_round_state(self):
         current_round = self.context['current_round']

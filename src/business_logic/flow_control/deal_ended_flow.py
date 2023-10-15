@@ -35,6 +35,7 @@ class DealEndedFlow(FlowBase):
 
         if not self.context['is_hit_by_player']:
             self._handle_banker_hit_card()
+            self._check_banker_can_hit_more()  # check need to update is_stand or not
             self.save_data()
         return True
 
@@ -72,7 +73,7 @@ class DealEndedFlow(FlowBase):
 
         return True
 
-    def _check_can_hit(self):
+    def _check_can_hit(self) -> bool:
         current_player_game_info = self.context['current_player_game_info']
         is_hit_by_player = self.context['is_hit_by_player']
         if is_hit_by_player:
@@ -80,7 +81,7 @@ class DealEndedFlow(FlowBase):
         else:
             return HitCardRule(current_player_game_info).check_banker_can_hit()
 
-    def _notify_player_to_hit_card(self):
+    def _notify_player_to_hit_card(self) -> None:
         current_round = self.context['current_round']
         current_player_game_info = self.context['current_player_game_info']
 
@@ -91,11 +92,23 @@ class DealEndedFlow(FlowBase):
         })
         SingletonManager.instance().connection_mgr.send_message_to_one_player(message)
     
-    def _handle_banker_hit_card(self):
+    def _handle_banker_hit_card(self) -> None:
         # draw one card
         self.draw_one_card_from_server()
         self.assign_card_to_banker_game_info()
- 
+
+    def _check_banker_can_hit_more(self) -> None:
+        #  already check this player is a banker accroding the context
+        current_player_game_info = self.context['current_player_game_info']
+        if not HitCardRule(current_player_game_info).check_banker_can_hit():
+            current_player_game_info.is_stand = True
+            self._popup_one_player_id_from_hit_cards()
+
+    def _popup_one_player_id_from_hit_cards(self):
+        current_round = self.context['current_round']
+        pop_player_id = current_round.hit_card_sequences.pop(0)
+        Logger.debug("Pop up player_id from hit card sequence", pop_player_id)
+
     def draw_one_card_from_server(self) -> bool:
         current_round = self.context['current_round']
         try:
@@ -122,16 +135,17 @@ class DealEndedFlow(FlowBase):
         current_player_game_info = self.context['current_player_game_info']
         card = self.context['card']
         current_player_game_info.hit_cards.append(card)
+        Logger.debug(f"assign car to banker, player_id: {current_player_game_info.player_id}, card: {card.to_dict()}")
 
-    def update_round_state_to_deal_ended(self):
+    def update_round_state_to_deal_ended(self) -> None:
         current_round = self.context['current_round']
         current_round.set_deal_ended()
 
-    def save_data(self):
+    def save_data(self) -> None:
         current_round = self.context['current_round']
         self.shoe_repository.save_shoe(current_round.deck.shoe)
 
-    def broadcast_banker_hit_card_to_clients(self):
+    def broadcast_banker_hit_card_to_clients(self) -> None:
         current_round = self.context['current_round']
         card = self.context['card']
 
