@@ -38,7 +38,3 @@ class NotifyClosedJob(JobBase):
     def __init__(self, data: dict) -> None:
         super().__init__(data)
 
-
-class NotifyNextRoundOpened(JobBase):
-    def __init__(self, data: dict) -> None:
-        super().__init__(data)

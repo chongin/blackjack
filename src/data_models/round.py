@@ -104,7 +104,7 @@ class Round:
     def is_deal_ended(self) -> bool:
         return self.state == RoundState.DEAL_ENDED
     
-    def is_resultedd(self) -> bool:
+    def is_resulted(self) -> bool:
         return self.state == RoundState.RESULTED
     
     def is_closed(self) -> bool:

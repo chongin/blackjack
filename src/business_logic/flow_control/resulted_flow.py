@@ -33,7 +33,7 @@ class ResultedFlow(FlowBase):
         for player_game_info in player_game_infos:
             self._calculate_player_result(player_game_info)
         
-        self.update_round_stauts()
+        self.update_round_state_to_resulted()
         self._save_data()
         return True
 
@@ -93,7 +93,7 @@ class ResultedFlow(FlowBase):
                 bet_option.result = 'lost'
                 bet_option.win_amt = 0
 
-    def update_round_stauts(self):
+    def update_round_state_to_resulted(self):
         current_round = self.context['current_round']
         current_round.set_resulted()
         Logger.debug(f"Update round state to {current_round.state}")

@@ -40,9 +40,6 @@ class JobManager:
     def add_notify_closed_job(self, job_data: dict) -> bool:
         return self._add_job('NotifyClosedJob', job_data)
 
-    def add_notify_nex_round_opened_job(self, job_data: dict) -> bool:
-        return self._add_job('NotifyNextRoundOpenedJob', job_data)
-    
     def _add_job(self, job_name: str, job_data: dict) -> bool:
         job = None
         if job_name == 'NotifyBetStartedJob':
@@ -57,8 +54,6 @@ class JobManager:
             job = NotifyResultedJob(job_data)
         elif job_name == 'NotifyClosedJob':
             job = NotifyClosedJob(job_data)
-        elif job_name == 'NotifyNextRoundOpenedJob':
-            job = NotifyNextRoundOpened(job_data)
         else:
             raise NotFoundException(f"Cannot find this job name: {job_name}")
         

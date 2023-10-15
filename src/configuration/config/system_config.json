@@ -10,8 +10,7 @@
         "NotifyDealStartedJob": 500,
         "NotifyDealEndedJob": 500,
         "NotifyResultedJob": 500,
-        "NotifyClosedJob": 2000,
-        "NotifyNextRoundStartedJob": 1000
+        "NotifyClosedJob": 2000
     },
     "check_job_timeout_interval_in_millisec": 500
 }
