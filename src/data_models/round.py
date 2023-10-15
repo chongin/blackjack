@@ -9,8 +9,6 @@ class RoundState:
     BET_ENDED = "bet_ended"
     DEAL_STARTED = "deal_started"
     DEAL_ENDED = "deal_ended"
-    PLAYERS_STANDED = 'players_standed'
-    BANKER_STANDED = 'banker_standed'
     RESULTED = "resulted"
     CLOSED = "closed"
 
@@ -106,12 +104,6 @@ class Round:
     def is_deal_ended(self) -> bool:
         return self.state == RoundState.DEAL_ENDED
     
-    def is_players_standed(self) -> bool:
-        return self.state == RoundState.PLAYERS_STANDED
-    
-    def is_banker_standed(self) -> bool:
-        return self.state == RoundState.BANKER_STANDED
-    
     def is_resultedd(self) -> bool:
         return self.state == RoundState.RESULTED
     
@@ -139,12 +131,6 @@ class Round:
     def set_deal_ended(self):
         self.state = RoundState.DEAL_ENDED
 
-    def set_players_standed(self):
-        self.state = RoundState.PLAYERS_STANDED
-
-    def set_banker_standed(self):
-        self.state = RoundState.BANKER_STANDED
-
     def set_resulted(self):
         self.state = RoundState.RESULTED
 
@@ -164,3 +150,11 @@ class Round:
                 all_bet_player_ids.append(player_game_info.player_id)
 
         return all_bet_player_ids
+
+    def get_all_player_info_have_betted(self) -> PlayerGameInfos:
+        all_player_infos = PlayerGameInfos()
+        for player_game_info in self.player_game_infos:
+            if player_game_info.bet_options:
+                all_player_infos.append(player_game_info)
+
+        return all_player_infos

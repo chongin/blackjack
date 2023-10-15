@@ -18,7 +18,8 @@ class PlayerGameInfo:
         self.hit_cards = Cards(data['hit_cards']) if data.get('hit_cards') else Cards([])
         self.is_stand = data['is_stand']
         self.result = data.get('result')
-
+        self.total_bet_amt = data.get('total_bet_amt')
+        self.total_win_amt = data.get('total_win_amt')
         self.bet_options = BetOptions(data['bet_options']) if data.get('bet_options') else BetOptions([])
 
     def to_dict(self) -> dict:
@@ -29,7 +30,9 @@ class PlayerGameInfo:
             'bet_options': self.bet_options.to_list(),
             'total_point': self.total_point(),
             'is_stand': self.is_stand,
-            'result': self.result
+            'result': self.result,
+            'total_bet_amt': self.total_bet_amt,
+            'total_win_amt': self.total_win_amt
         }
 
     def total_point(self) -> int:
@@ -56,6 +59,12 @@ class PlayerGameInfo:
 
     def is_bust(self) -> bool:
         return self.total_point() > 21
+
+    def is_blackjack(self) -> bool:
+        if self.hit_cards and len(self.hit_cards) > 0:
+            return False
+        
+        return self.total_point() == 21
 
 
 class PlayerGameInfos(list):

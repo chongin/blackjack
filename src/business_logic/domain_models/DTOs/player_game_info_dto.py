@@ -17,7 +17,11 @@ class PlayerGameInfoDTO:
         self.bet_options = BetOptionsDTO.from_data_model(player_game_info.bet_options)
         self.total_point = player_game_info.total_point()
         self.result = player_game_info.result
-
+        self.total_bet_amt = player_game_info.total_bet_amt
+        self.total_win_amt = player_game_info.total_win_amt
+        self.is_bust = player_game_info.is_bust()
+        self.is_blackjack = player_game_info.is_blackjack()
+ 
     def to_dict(self) -> dict:
         return {
             "player_id": self.player_id,
@@ -26,7 +30,9 @@ class PlayerGameInfoDTO:
             "is_stand": self.is_stand,
             "total_point": self.total_point,
             "bet_options": self.bet_options.to_list(),
-            "result": self.result
+            "result": self.result,
+            "total_bet_amt": self.total_bet_amt,
+            "total_win_amt": self.total_win_amt
         }
 
 

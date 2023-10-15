@@ -8,10 +8,10 @@
         "double_down"
     ],
     "odds": {
-        "base_game": 1,
-        "blackjack": 2,
+        "base_game": 2,
+        "blackjack": 3,
         "pair": 8,
-        "double_down": 2,
+        "double_down": 3,
         "insurence": 0.5
     }
 }

@@ -92,13 +92,13 @@ class DealStartedFlow(FlowBase):
         # assign it to player game info 
         current_player_game_info.first_two_cards.append(card)
 
-    def _pop_up_current_player_id_from_deal_card_sequences(self):
+    def _pop_up_current_player_id_from_deal_card_sequences(self) -> None:
         # pop up this player id from the deal_card_sequences
         current_round = self.context['current_round']
         pop_player_id = current_round.deal_card_sequences.pop(0)
         Logger.debug("Pop up player_id from deal card sequence", pop_player_id)
         
-    def _update_round_state(self):
+    def _update_round_state(self) -> None:
         current_round = self.context['current_round']
         if len(current_round.deal_card_sequences) == 0:
             # already deal all cards
@@ -106,11 +106,11 @@ class DealStartedFlow(FlowBase):
         else:
             current_round.set_deal_started()
 
-    def _save_data(self):
+    def _save_data(self) -> None:
         current_round = self.context['current_round']
         self.shoe_repository.save_shoe(current_round.deck.shoe)
     
-    def _broadcast_messages_to_clients(self):
+    def _broadcast_messages_to_clients(self) -> None:
         current_round = self.context['current_round']
         current_player_game_info = self.context['current_player_game_info']
         card = self.context['card']
@@ -121,7 +121,7 @@ class DealStartedFlow(FlowBase):
         message.update({'card': card.to_dict()})
         SingletonManager.instance().connection_mgr.broadcast_message(message)
 
-    def _create_next_job(self):
+    def _create_next_job(self) -> None:
         current_round = self.context['current_round']
         if current_round.is_deal_started():
             SingletonManager.instance().job_mgr.add_notify_deal_started_job(current_round.notify_info())
