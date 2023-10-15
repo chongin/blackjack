@@ -13,7 +13,7 @@ from business_logic.flow_control.flow_base import FlowBase
 class DealEndedFlow(FlowBase):    
     def _do_self_validation(self) -> bool:
         current_round = self.context['current_round']
-        if not current_round.is_deal_started():
+        if not current_round.is_deal_ended():
             Logger.error("Round state is not matched", current_round.state)
             return False
         
@@ -69,10 +69,7 @@ class DealEndedFlow(FlowBase):
             # this is deal to banker, so get the banker game info
             self.context['current_player_game_info'] = current_round.banker_game_info
             self.context['is_hit_by_player'] = False
-        
-        if self.context['current_player_game_info'].can_hit():
-            Logger.error("Current player cannot hit card", current_player_game_info.to_dict())
-            return False
+
         return True
 
     def _check_can_hit(self):
