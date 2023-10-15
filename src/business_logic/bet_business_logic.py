@@ -23,9 +23,10 @@ class BetBusinessLogic:
         self._do_validation(shoe_name, player_name, round_id, bet_options_req)
         self._process()
         
-        need_notify = self.context['need_notify']
-        if need_notify:
+        if self.context['need_create_job']:
             self.create_bet_started_job()
+        
+        self.broadcast_bet_message_to_other_clients()
         return self._compose_result()
 
     def _do_validation(self, shoe_name: str, player_name: str, round_id: str,
@@ -53,6 +54,9 @@ class BetBusinessLogic:
         if total_bet_amt > player_profile.wallet.balance:
             raise OverBalanceLimitException(f"You balance is {player_profile.wallet.balance} is less than your total bet, cannot bet.")
         
+        player_game_info = current_round.find_player_game_info_by_player_id(player_profile.player_id)
+        if not player_game_info:
+            raise DataInvalidException(f"Cannot find this player in the player game info list. player_id: {player_profile.player_id}.")
         # later also need to validate the bet_options, because some bet_options has conditions, for example pair
         # validate_bet_options
 
@@ -60,41 +64,31 @@ class BetBusinessLogic:
             'shoe': shoe,
             'player_profile': player_profile,
             'current_round': current_round,
-            'total_bet_amt': total_bet_amt
+            'total_bet_amt': total_bet_amt,
+            'player_game_info': player_game_info
         })
         
-    def _process(self, bet_options_req: BetOptionsReq) -> None:
+    def _process(self) -> None:
         self._add_bet_options_to_player_game_info()
         self._calculate_player_balance()
         self._update_round_status_to_bet_started()
         self._save_data()
         
     def _add_bet_options_to_player_game_info(self) -> None:
-        current_round = self.context['current_round']
-        player_profile = self.context['player_profile']
         bet_options_req = self.context['bet_options_req']
-
+        player_game_info = self.context['player_game_info']
         # add data to data model object
-        bet_options = BetOptions([])
+        current_bet_options = BetOptions([])
         for bet_option_req in bet_options_req:
-            bet_options.append(BetOption({
+            current_bet_options.append(BetOption({
                 "option_name": bet_option_req.option_name,
                 "bet_amt": bet_option_req.bet_amt
             }))
 
-        player_game_info = current_round.find_player_game_info_by_player_id(player_profile.player_id)
-        if player_game_info is None:
-            player_game_info = PlayerGameInfo({
-                "player_id": player_profile.player_id,
-                "bet_options": bet_options.to_list(),
-                "first_two_cards": [],
-                "hit_cards": [],
-                "is_stand": False
-            })
-            current_round.player_game_infos.append(player_game_info)
-        else:
-            for bet_option in bet_options:
-                player_game_info.bet_options.append(bet_option)
+        for bet_option in current_bet_options:
+            player_game_info.bet_options.append(bet_option)
+        
+        self.context['current_bet_options'] = current_bet_options
 
     def _calculate_player_balance(self) -> None:
         player_profile = self.context['player_profile']
@@ -111,9 +105,9 @@ class BetBusinessLogic:
         current_round = self.context['current_round']
         if current_round.is_opened():
             current_round.set_bet_started()
-            self.context['need_notify'] = True
+            self.context['need_create_job'] = True
         else:
-            self.context['need_notify'] = False
+            self.context['need_create_job'] = False
     
     def _save_data(self) -> None:
         shoe = self.context['shoe']
@@ -129,4 +123,17 @@ class BetBusinessLogic:
 
     def create_bet_started_job(self) -> None:
         current_round = self.context['current_round']
-        SingletonManager.instance().job_mgradd_notify_bet_ended_job(current_round.notify_info())
+        SingletonManager.instance().job_mgr.add_notify_bet_ended_job(current_round.notify_info())
+
+    def broadcast_bet_message_to_other_clients(self) -> None:
+        player_profile = self.context['player_profile']
+        current_bet_options = self.context['current_bet_options']
+        current_round = self.context['current_round']
+
+        message = {'action': 'notify_player_bet_options'}
+        message.update(current_round.notify_info())
+        message.update({
+            'player_id': player_profile.player_id,
+            'bet_options': current_bet_options.to_list()
+        })
+        SingletonManager.instance().connection_mgr.broadcase_messages_exclude_specifi_player(message, player_profile.player_id)

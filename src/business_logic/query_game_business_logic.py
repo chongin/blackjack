@@ -66,6 +66,7 @@ class QueryGameBusinessLogic:
         player_profile = self.context['player_profile']
         message = {'action': 'notify_new_player'}
         message.update(current_round.notify_info())
+        message.update({'player_id': player_profile.player_id})
         SingletonManager.instance().connection_mgr.broadcase_messages_exclude_specifi_player(message, player_profile.player_id)
 
     def _compose_result(self) -> dict:
