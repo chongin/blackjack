@@ -55,7 +55,7 @@ class PlayerGameInfo:
                 return ace_sum
 
     def is_bust(self) -> bool:
-        self.total_point() > 21
+        return self.total_point() > 21
 
 
 class PlayerGameInfos(list):

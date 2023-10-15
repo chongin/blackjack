@@ -20,10 +20,7 @@ class HitBusinessLogic:
     def handle_hit(self, shoe_name: str, player_name: str, round_id: str) -> dict:
         self._do_validation(shoe_name, player_name, round_id)
         self._process()
-        if self.context['can_hit_more']:
-            # just waitting current player to do next operation
-            pass
-        else:
+        if not self.context['can_hit_more']:
             self._create_job_to_notify_next_player_or_banker_to_hit_or_stand()
         return self._compose_result()
 
@@ -39,7 +36,6 @@ class HitBusinessLogic:
         player_profile = self.player_profile_respository.retrieve_player_profile_model(player_name)
         if player_profile is None:
             raise PlayerNotFoundException(f"Cannot find this player: {player_name}")
-        
         current_round = shoe.current_deck.current_round
         if current_round.round_id != round_id:
             raise RoundNotFoundException(f"Round id: {round_id} is not matched current round. ")
@@ -52,7 +48,7 @@ class HitBusinessLogic:
             raise DataInvalidException(f"Cannot find this player in the player game info list. player_id: {player_profile.player_id}.")
         
         #  validate is this player can hit on this turn or not
-        hit_card_sequences = current_round.deal_card_sequences
+        hit_card_sequences = current_round.hit_card_sequences
         if not hit_card_sequences or hit_card_sequences[0] != player_profile.player_id:
             raise ActionNotAllowedException(f"Base on play game sequence. It is not the turn for this player to hit. player_id: {player_profile.player_id}")
 
@@ -69,10 +65,10 @@ class HitBusinessLogic:
     def _process(self) -> None:
         self._draw_one_card_from_server()
         self._assign_card_player_game_info()
-        if not self._check_player_can_hit_more():
-            self._handle_player_hit_finished()  # cannot hit more
+        if self._check_player_can_hit_more():
+            self._handle_player_hit_more()  # handle hit more card
         else:
-            self._handle_player_hit_more()
+            self._handle_player_hit_finished()  # cannot hit more
         self._save_data()
 
     def _draw_one_card_from_server(self) -> None:
@@ -91,17 +87,16 @@ class HitBusinessLogic:
         player_game_info = self.context['player_game_info']
         card = self.context['card']
         player_game_info.hit_cards.append(card)
-        Logger.debug(f"assign card to player, player_id: {player_game_info.player_id}", card)
+        Logger.debug(f"assign card to player, player_id: {player_game_info.player_id}", card.to_dict())
 
     def _check_player_can_hit_more(self) -> bool:
         player_game_info = self.context['player_game_info']
-        if not HitCardRule(player_game_info).check_player_can_hit():
-            self.context['can_hit_more'] = False
-        else:
-            self.context['can_hit_more'] = True
+        self.context['can_hit_more'] = HitCardRule(player_game_info).check_player_can_hit()
+        return self.context['can_hit_more']
 
     def _handle_player_hit_finished(self):
         player_game_info = self.context['player_game_info']
+        Logger.debug("Player cannot hit card any more", player_game_info.to_dict())
         player_game_info.is_stand = True
         self._popup_one_player_id_from_hit_cards()
 

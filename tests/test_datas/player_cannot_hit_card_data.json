@@ -1,0 +1,262 @@
+{
+    "players": {
+      "chong": {
+        "player_id": "01HCDCFMGX8S89NWSKHCS4380Q",
+        "player_name": "chong",
+        "state": "active",
+        "wallet": {
+          "balance": 1,
+          "total_lost": 0,
+          "total_win": 0
+        }
+      },
+      "chong1": {
+        "player_id": "01HCRQ5JKTNM1T34M7CWSQ898Q",
+        "player_name": "chong1",
+        "state": "active",
+        "wallet": {
+          "balance": 500,
+          "total_lost": 0,
+          "total_win": 0
+        }
+      },
+      "chong2": {
+        "player_id": "01HCSW74J0X9Q2TTPA6JEHYPAC",
+        "player_name": "chong2",
+        "state": "active",
+        "wallet": {
+          "balance": 500,
+          "total_lost": 0,
+          "total_win": 0
+        }
+      },
+      "chong3": {
+        "player_id": "01HCSWC6M9JFHJRSM57QCEWS95",
+        "player_name": "chong3",
+        "state": "active",
+        "wallet": {
+          "balance": 500,
+          "total_lost": 0,
+          "total_win": 0
+        }
+      },
+      "chong4": {
+        "player_id": "01HCSWM3ENCV32JD38B824KW9N",
+        "player_name": "chong4",
+        "state": "active",
+        "wallet": {
+          "balance": 500,
+          "total_lost": 0,
+          "total_win": 0
+        }
+      },
+      "chong5": {
+        "player_id": "01HCSWM7N63BP9M6K1D4WNGSW2",
+        "player_name": "chong5",
+        "state": "active",
+        "wallet": {
+          "balance": 500,
+          "total_lost": 0,
+          "total_win": 0
+        }
+      },
+      "chong6": {
+        "player_id": "01HCSWNAHR4KC9YSRFR7SJ35DH",
+        "player_name": "chong6",
+        "state": "active",
+        "wallet": {
+          "balance": 497,
+          "total_lost": 0,
+          "total_win": 0
+        }
+      },
+      "chong7": {
+        "player_id": "01HCSWRD43QMXPK4HPCJ8149MK",
+        "player_name": "chong7",
+        "state": "active",
+        "wallet": {
+          "balance": 494,
+          "total_lost": 0,
+          "total_win": 0
+        }
+      }
+    },
+    "shoes": {
+      "IoT1012": {
+        "config": {
+          "betting_countdown": 30,
+          "chips": [
+            1,
+            5,
+            10,
+            25,
+            50
+          ],
+          "number_of_decks": 8,
+          "play_mode": "multi_players"
+        },
+        "current_deck": {
+          "black_card_postion": 340,
+          "current_round": {
+            "banker_game_info": {
+              "is_stand": false,
+              "total_point": 0
+            },
+            "created_at": "2023-10-15T14:38:09",
+            "deck_index": 0,
+            "hand": 0,
+            "has_black_card": false,
+            "round_id": "01HCSWBSNXTGG80PWHPG6P6Q2F",
+            "state": "opened",
+            "updated_at": "2023-10-15T14:38:09"
+          },
+          "deck_api_id": "3p40paa87x90",
+          "deck_index": 0,
+          "remaind_count_of_cards": 416,
+          "shoe_id": "01HCSWBSNX6RCJX84TZ1GAXDB3",
+          "started_at": "2023-10-15T14:38:09",
+          "state": "active"
+        },
+        "deck_api_id": "3p40paa87x90",
+        "shoe_id": "01HCSWBSNX6RCJX84TZ1GAXDB3",
+        "shoe_name": "IoT1012",
+        "shuffer_count": 0,
+        "state": "active"
+      },
+      "Test": {
+        "config": {
+          "betting_countdown": 3,
+          "chips": [
+            1,
+            5,
+            10,
+            25,
+            50
+          ],
+          "number_of_decks": 8,
+          "play_mode": "signle_player"
+        },
+        "current_deck": {
+          "black_card_postion": 316,
+          "current_round": {
+            "banker_game_info": {
+              "is_stand": false,
+              "total_point": 0
+            },
+            "created_at": "2023-10-15T14:38:09",
+            "deck_index": 0,
+            "hand": 0,
+            "has_black_card": false,
+            "round_id": "01HCSWBSKMKPEPBJNF8Y2W9DFT",
+            "state": "opened",
+            "updated_at": "2023-10-15T14:38:09"
+          },
+          "deck_api_id": "3p40paa87x90",
+          "deck_index": 0,
+          "remaind_count_of_cards": 416,
+          "shoe_id": "01HCSWBSKM0VHGYCYZ8YDEMV1S",
+          "started_at": "2023-10-15T14:38:09",
+          "state": "active"
+        },
+        "deck_api_id": "3p40paa87x90",
+        "shoe_id": "01HCSWBSKM0VHGYCYZ8YDEMV1S",
+        "shoe_name": "Test",
+        "shuffer_count": 0,
+        "state": "active"
+      },
+      "table1": {
+        "config": {
+          "betting_countdown": 3,
+          "chips": [
+            1,
+            5,
+            10,
+            25,
+            50
+          ],
+          "number_of_decks": 8,
+          "play_mode": "signle_player"
+        },
+        "current_deck": {
+          "black_card_postion": 353,
+          "current_round": {
+            "banker_game_info": {
+              "first_two_cards": [
+                {
+                  "code": "6H",
+                  "received_at": "2023-10-15T01:49:56",
+                  "suit": "HEARTS",
+                  "value": "6"
+                },
+                {
+                  "code": "6H",
+                  "received_at": "2023-10-15T02:12:01",
+                  "suit": "HEARTS",
+                  "value": "6"
+                }
+              ],
+              "is_stand": false,
+              "total_point": 12
+            },
+            "created_at": "2023-10-10T18:09:44",
+            "deck_index": 0,
+            "hand": 0,
+            "has_black_card": false,
+            "hit_card_sequences": [
+              "01HCDCFMGX8S89NWSKHCS4380Q",
+              "banker"
+            ],
+            "player_game_infos": [
+              {
+                "bet_options": [
+                  {
+                    "bet_amt": 20,
+                    "option_name": "base_win"
+                  }
+                ],
+                "first_two_cards": [
+                  {
+                    "code": "6H",
+                    "received_at": "2023-10-15T01:10:02",
+                    "suit": "HEARTS",
+                    "value": "6"
+                  },
+                  {
+                    "code": "6H",
+                    "received_at": "2023-10-15T01:55:05",
+                    "suit": "HEARTS",
+                    "value": "6"
+                  }
+                ],
+                "hit_cards": [
+                  {
+                    "code": "6H",
+                    "received_at": "2023-10-15T17:22:25",
+                    "suit": "HEARTS",
+                    "value": "6"
+                  }
+                ],
+                "is_stand": false,
+                "player_id": "01HCDCFMGX8S89NWSKHCS4380Q",
+                "total_point": 18
+              }
+            ],
+            "round_id": "01HCDCFMEJP0KDJFT9938Y4YYF",
+            "state": "deal_ended",
+            "updated_at": "2023-10-10T18:09:44"
+          },
+          "deck_api_id": "3p40paa87x90",
+          "deck_index": 0,
+          "remaind_count_of_cards": 416,
+          "shoe_id": "01HCDCFMEJQ30W2899Z5D2ZTWG",
+          "started_at": "2023-10-10T18:09:44",
+          "state": "active"
+        },
+        "deck_api_id": "3p40paa87x90",
+        "shoe_id": "01HCDCFMEJQ30W2899Z5D2ZTWG",
+        "shoe_name": "table1",
+        "shuffer_count": 0,
+        "state": "active"
+      }
+    }
+  }
