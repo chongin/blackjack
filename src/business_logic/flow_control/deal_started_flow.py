@@ -13,7 +13,7 @@ from business_logic.flow_control.flow_base import FlowBase
 class DealStartedFlow(FlowBase):    
     def _do_self_validation(self) -> bool:
         current_round = self.context['current_round']
-        if not current_round.is_bet_ended() or not current_round.is_deal_started():
+        if not current_round.is_bet_ended() and not current_round.is_deal_started():
             Logger.error("Round state is not matched", current_round.state)
             return False
         
@@ -34,7 +34,7 @@ class DealStartedFlow(FlowBase):
         self.assign_card_to_current_player_game_info()
         self._update_round_state()
         self._pop_up_current_player_id_from_deal_card_sequences()
-        self._save_data
+        self._save_data()
         return True
 
     def _after_process(self) -> bool:
@@ -82,6 +82,8 @@ class DealStartedFlow(FlowBase):
         else:
             # this is deal to banker, so get the banker game info
             self.context['current_player_game_info'] = current_round.banker_game_info
+
+            print(f"333333333333333333, {self.context['current_player_game_info']}")
         return True
     
     def assign_card_to_current_player_game_info(self) -> None:
@@ -94,8 +96,10 @@ class DealStartedFlow(FlowBase):
     def _pop_up_current_player_id_from_deal_card_sequences(self):
         # pop up this player id from the deal_card_sequences
         current_round = self.context['current_round']
+        print(f"before popup................. {current_round.deal_card_sequences}")
         pop_player_id = current_round.deal_card_sequences.pop(0)
         Logger.debug("Pop up player_id", pop_player_id)
+        print(f"after popup................. {current_round.deal_card_sequences}")
         
     def _update_round_state(self):
         current_round = self.context['current_round']

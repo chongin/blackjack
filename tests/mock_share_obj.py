@@ -34,3 +34,6 @@ class MockShareObj:
     def save_to_firebase(self):
         ShoeRepository().save_shoe(self.shoe)
         PlayerProfileRespository().save_player(self.player)
+
+    def retrieve_shoe_from_firebase(self):
+        return ShoeRepository().retrieve_shoe_model(self.shoe_name)

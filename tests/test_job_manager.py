@@ -81,7 +81,7 @@ def atest_handle_bet_started_timeout_job():
     assert job_mgr.jobs[0].job_name == 'NotifyBetEndedJob', "Job name is wrong"
     print(job_mgr.jobs[0].to_dict())
 
-def test_handle_bet_ended_timeout_job():
+def atest_handle_bet_ended_timeout_job():
     mock_obj = MockShareObj('bet_ended_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe
@@ -96,3 +96,48 @@ def test_handle_bet_ended_timeout_job():
     assert len(job_mgr.jobs) == 1, "Jobs should have one job inside it"
     assert job_mgr.jobs[0].job_name == 'NotifyDealStartedJob', "Job name is wrong"
     print(job_mgr.jobs[0].to_dict())
+
+def atest_handle_deal_started_timeout_job_for_player_first_card():
+    mock_obj = MockShareObj('deal_started_player_first_card_data')
+    mock_obj.save_to_firebase()
+    shoe = mock_obj.shoe
+    round = shoe.current_deck.current_round
+
+    notify_info = round.notify_info()
+    job = NotifyDealStartedJob(notify_info)
+    job_mgr = SingletonManager.instance().job_mgr
+    job_mgr.clear_jobs()
+
+    job_mgr.handle_timeout_job(job)
+    assert len(job_mgr.jobs) == 1, "Jobs should have one job inside it"
+    assert job_mgr.jobs[0].job_name == 'NotifyDealStartedJob', "Job name is wrong"
+
+    shoe_db = mock_obj.retrieve_shoe_from_firebase()
+    current_round = shoe_db.current_deck.current_round
+
+    assert current_round.state == 'deal_started', "Round state is wrong"
+    assert len(current_round.player_game_infos[0].first_two_cards) == 1, "Should draw one card to player"
+    assert len(current_round.deal_card_sequences) == 3, "Should pop up first player id"
+
+def test_handle_deal_started_timeout_job_for_banker_first_card():
+    mock_obj = MockShareObj('deal_started_banker_first_card_data')
+    mock_obj.save_to_firebase()
+    shoe = mock_obj.shoe
+    round = shoe.current_deck.current_round
+
+    notify_info = round.notify_info()
+    job = NotifyDealStartedJob(notify_info)
+    job_mgr = SingletonManager.instance().job_mgr
+    job_mgr.clear_jobs()
+
+    job_mgr.handle_timeout_job(job)
+    assert len(job_mgr.jobs) == 1, "Jobs should have one job inside it"
+    assert job_mgr.jobs[0].job_name == 'NotifyDealStartedJob', "Job name is wrong"
+
+    shoe_db = mock_obj.retrieve_shoe_from_firebase()
+    current_round = shoe_db.current_deck.current_round
+
+    assert current_round.state == 'deal_started', "Round state is wrong"
+    assert len(current_round.banker_game_info.first_two_cards) == 1, "Should draw one card to player"
+    assert len(current_round.deal_card_sequences) == 2, "Should pop up first player id"
+

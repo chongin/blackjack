@@ -1,5 +1,5 @@
 from api_clients.api_client_base import ApiClientBase
-
+from logger import Logger
 
 class DeckDetail:
     def __init__(self, data: dict) -> None:
@@ -25,7 +25,7 @@ class DeckCardApiClient(ApiClientBase):
     def create_new_deck(self, number_of_decks: int) -> DeckDetail:
         global enable_mock
         if enable_mock:
-            print("Mock create_new_deck...")
+            Logger.debug("Mock create_new_deck...")
             return DeckDetail({
                 "success": True,
                 "deck_id": "3p40paa87x90",
@@ -40,7 +40,7 @@ class DeckCardApiClient(ApiClientBase):
     def draw_one_card(self, deck_api_id: str) -> CardDetail:
         global enable_mock
         if enable_mock:
-            print("Mock draw_one_card...")
+            Logger.debug("Mock draw_one_card...")
             data = {
                 "success": True, 
                 "deck_id": "kxozasf3edqu",
@@ -54,14 +54,14 @@ class DeckCardApiClient(ApiClientBase):
                                 }, 
                         "value": "6",
                         "suit": "HEARTS"
-                    },
+                    }
                 ],
                 "remaining": 50
             }
-            return CardDetail(data['cards'][0])
+        else:
+            url_suffix = f"api/deck/{deck_api_id}/draw/?count=1"
+            data = self.make_request(url_suffix, "GET")
 
-        url_suffix = f"api/deck/{deck_api_id}/draw/?count=1"
-        data = self.make_request(url_suffix, "GET")
-        return CardDetail(data['cards'][0])
-
-
+        card_hash = data['cards'][0]
+        card_hash.update({'deck_id': data['deck_id']})
+        return CardDetail(card_hash)

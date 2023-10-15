@@ -12,10 +12,8 @@ class CurrentRoundDTO:
         self.state = round.state
         self.hand = round.hand
         self.player_game_infos = PlayerGameInfosDTO.from_data_model(round.player_game_infos)
-        if type(round.banker_game_info) is dict:
-            self.banker_game_info = {}
-        else:
-            self.banker_game_info = BankerGameInfoDTO.from_data_model(round.banker_game_info)
+        self.banker_game_info = BankerGameInfoDTO.from_data_model(round.banker_game_info)
+            
 
         # only have one banker, so change it to dict
         if len(self.banker_game_info) > 0:

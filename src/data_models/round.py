@@ -40,7 +40,7 @@ class Round:
         self.hand = data['hand']
         self.state = data['state']
         self.player_game_infos = PlayerGameInfos(data['player_game_infos']) if data.get('player_game_infos') else PlayerGameInfos([])
-        self.banker_game_info = BankerGameInfo(data['banker_game_info']) if data.get('banker_game_info') else {}
+        self.banker_game_info = BankerGameInfo(data['banker_game_info']) if data.get('banker_game_info') else BankerGameInfo.generate_default_ins()
         self.has_black_card = data['has_black_card']
         self.bet_started_at = data.get('bet_started_at')
         self.bet_ended_at = data.get('bet_ended_at')
@@ -60,6 +60,7 @@ class Round:
             'hand': self.hand,
             'state': self.state,
             'player_game_infos': self.player_game_infos.to_list(),
+            'banker_game_info': self.banker_game_info.to_dict(),
             'has_black_card': self.has_black_card,
             'bet_started_at': self.bet_started_at,
             'bet_ended_at': self.bet_ended_at,
@@ -68,11 +69,6 @@ class Round:
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }
-
-        if type(self.banker_game_info) is dict:
-            hash['banker_game_info'] = {}
-        else:
-            hash['banker_game_info'] = self.banker_game_info.to_dict()
 
         return hash   
 

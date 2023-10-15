@@ -61,6 +61,14 @@ class PlayerGameInfos(list):
 #  Banker only have one
 class BankerGameInfo(PlayerGameInfo):
     BANKER_ID = 'banker'
+    
+    @classmethod
+    def generate_default_ins(cls) -> 'BankerGameInfo':
+        return cls({
+            'first_two_cards': [],
+            'hit_cards': [],
+            'is_stand': False
+        })
 
     def __init__(self, data: dict) -> None:
         data.update({
@@ -72,6 +80,6 @@ class BankerGameInfo(PlayerGameInfo):
 
     def to_dict(self) -> dict:
         hash = super().to_dict()
-        hash.remove('player_id')
-        hash.remove('bet_options')
+        del hash['player_id']
+        del hash['bet_options']
         return hash
