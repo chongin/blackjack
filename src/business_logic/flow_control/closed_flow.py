@@ -3,7 +3,7 @@ from singleton_manger import SingletonManager
 from utils.util import Util
 from business_logic.flow_control.flow_base import FlowBase
 from data_models.round import Round
-
+from business_logic.repositories.round_histories_respository import RoundHistoriesRepository
 
 class ClosedFlow(FlowBase):    
     def _do_self_validation(self) -> bool:
@@ -36,8 +36,8 @@ class ClosedFlow(FlowBase):
         next_round.set_parent(current_deck)
 
     def _save_round_to_history(self) -> None:
-        #  TD Later
-        pass
+        current_round = self.context['current_round']
+        RoundHistoriesRepository().save_round(current_round)
 
     def _update_round_state_to_closed(self) -> None:
         current_round = self.context['current_round']

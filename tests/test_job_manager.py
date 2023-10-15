@@ -251,7 +251,7 @@ def atest_handle_deal_ended_banker_hit_card():
     assert len(current_round.hit_card_sequences) == 0, "Should have 0 inside the hit card sequences"
 
 
-def test_handle_deal_ended_banker_hit_card():
+def test_handle_closed():
     mock_obj = MockShareObj('closed_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe

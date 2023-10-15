@@ -2,7 +2,7 @@ from api.controllers.base_controller import BaseController
 from business_logic.stand_business_logic import StandBusinessLogic
 
 
-class HitController(BaseController):
+class StandController(BaseController):
     def __init__(self, request) -> None:
         super().__init__(request)
 

@@ -158,3 +158,12 @@ class Round:
                 all_player_infos.append(player_game_info)
 
         return all_player_infos
+    
+
+class RoundHistories(list):
+    def __init__(self, datalist) -> None:
+        for data in datalist:
+            self.append(Round(data))
+
+    def to_list(self) -> list:
+        return [item.to_dict() for item in self]
