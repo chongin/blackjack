@@ -44,8 +44,8 @@ class Round:
         self.has_black_card = data['has_black_card']
         self.bet_started_at = data.get('bet_started_at')
         self.bet_ended_at = data.get('bet_ended_at')
-        self.deal_card_sequences = data.get('deal_card_sequences') # this is the player id list
-        self.hit_card_sequences = data.get('hit_card_sequences')
+        self.deal_card_sequences = data.get('deal_card_sequences') if data.get('deal_card_sequences') else []
+        self.hit_card_sequences = data.get('hit_card_sequences') if data.get('hit_card_sequences') else []
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
 

@@ -32,8 +32,9 @@ class DealStartedFlow(FlowBase):
             return False
 
         self.assign_card_to_current_player_game_info()
-        self._update_round_state()
         self._pop_up_current_player_id_from_deal_card_sequences()
+
+        self._update_round_state()  # this should pup here after pop up card logic
         self._save_data()
         return True
 
@@ -82,8 +83,6 @@ class DealStartedFlow(FlowBase):
         else:
             # this is deal to banker, so get the banker game info
             self.context['current_player_game_info'] = current_round.banker_game_info
-
-            print(f"333333333333333333, {self.context['current_player_game_info']}")
         return True
     
     def assign_card_to_current_player_game_info(self) -> None:
@@ -96,10 +95,8 @@ class DealStartedFlow(FlowBase):
     def _pop_up_current_player_id_from_deal_card_sequences(self):
         # pop up this player id from the deal_card_sequences
         current_round = self.context['current_round']
-        print(f"before popup................. {current_round.deal_card_sequences}")
         pop_player_id = current_round.deal_card_sequences.pop(0)
         Logger.debug("Pop up player_id", pop_player_id)
-        print(f"after popup................. {current_round.deal_card_sequences}")
         
     def _update_round_state(self):
         current_round = self.context['current_round']
