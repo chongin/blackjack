@@ -123,7 +123,7 @@ class BetBusinessLogic:
 
     def create_bet_started_job(self) -> None:
         current_round = self.context['current_round']
-        SingletonManager.instance().job_mgr.add_notify_bet_ended_job(current_round.notify_info())
+        SingletonManager.instance().job_mgr.add_notify_bet_started_job(current_round.notify_info())
 
     def broadcast_bet_message_to_other_clients(self) -> None:
         player_profile = self.context['player_profile']

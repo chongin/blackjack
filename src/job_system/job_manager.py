@@ -75,7 +75,6 @@ class JobManager:
         while self.running():
             try:
                 time.sleep(self.excution_interval)
-                print(f"Excute timer run. {Util.current_utc_time()}")
                 timeout_jobs = self.retrieve_timeout_jobs()
                 for timeout_job in timeout_jobs:
                     self.handle_timeout_job(timeout_job)

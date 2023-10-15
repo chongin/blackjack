@@ -6,7 +6,7 @@ from configuration.system_config import SystemConfig
 if __name__ == '__main__':
     # start job manager to handle the game flow
     SingletonManager.instance().message_factory
-    SingletonManager.instance().job_mgr
+    SingletonManager.instance().job_mgr.start_timer()
     SystemConfig.instance().set_tables()
     # start the web server to handle cient connection for pushing message to client
     # ### WebSocketServer().run()
