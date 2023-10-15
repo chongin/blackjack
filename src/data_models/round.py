@@ -89,7 +89,7 @@ class Round:
         return self.state == RoundState.OPENED or self.state == RoundState.BET_STARTED
 
     def can_interaction(self) -> bool:
-        return self.state == RoundState.DEAL_ENDED or self.state == RoundState.OPENED # need change
+        return self.state == RoundState.DEAL_ENDED
     
     def is_opened(self) -> bool:
         return self.state == RoundState.OPENED

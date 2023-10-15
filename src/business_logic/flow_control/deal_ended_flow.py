@@ -94,7 +94,7 @@ class DealEndedFlow(FlowBase):
     
     def _handle_banker_hit_card(self) -> None:
         # draw one card
-        self.draw_one_card_from_server()
+        self._draw_one_card_from_server()
         self.assign_card_to_banker_game_info()
 
     def _check_banker_can_hit_more(self) -> None:
@@ -109,7 +109,7 @@ class DealEndedFlow(FlowBase):
         pop_player_id = current_round.hit_card_sequences.pop(0)
         Logger.debug("Pop up player_id from hit card sequence", pop_player_id)
 
-    def draw_one_card_from_server(self) -> bool:
+    def _draw_one_card_from_server(self) -> bool:
         current_round = self.context['current_round']
         try:
             card_detail = DeckCardApiClient().draw_one_card(current_round.deck.deck_api_id)
