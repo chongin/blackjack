@@ -20,7 +20,6 @@ class ShoeRepository:
     def create_shoe_model(self, shoe_name: str, number_of_decks: int,
                           chips: list[int], play_mode: str, betting_countdown: int) -> Shoe:
         deck_detail = DeckCardApiClient().create_new_deck(number_of_decks)
-        print(f"create new deck: {deck_detail}")
         shoe = Shoe.new_model(
             shoe_name, deck_detail.deck_api_id,
             number_of_decks,

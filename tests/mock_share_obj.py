@@ -19,7 +19,6 @@ class MockShareObj:
         current_script_path = os.path.abspath(__file__)
         current_directory = os.path.dirname(current_script_path)
         full_path = f"{current_directory}/test_datas/{self.file_name}.json"
-        print(full_path)
         with open(full_path, "r") as json_file:
             json_data = json.load(json_file)
 

@@ -1,6 +1,7 @@
 from api_clients.api_client_base import ApiClientBase
 from logger import Logger
 
+
 class DeckDetail:
     def __init__(self, data: dict) -> None:
         self.deck_api_id = data['deck_id']
@@ -26,15 +27,17 @@ class DeckCardApiClient(ApiClientBase):
         global enable_mock
         if enable_mock:
             Logger.debug("Mock create_new_deck...")
-            return DeckDetail({
+            data = {
                 "success": True,
                 "deck_id": "3p40paa87x90",
                 "shuffled": True,
                 "remaining": 416
-            })
-        
-        url_suffix = f"api/deck/new/shuffle?deck_count={number_of_decks}"
-        data = self.make_request(url_suffix, "GET")
+            }
+        else:
+            url_suffix = f"api/deck/new/shuffle?deck_count={number_of_decks}"
+            data = self.make_request(url_suffix, "GET")
+
+        Logger.debug("Create new deck success. data:", data)
         return DeckDetail(data)
 
     def draw_one_card(self, deck_api_id: str) -> CardDetail:

@@ -44,6 +44,10 @@ class SystemConfig:
     def set_tables(self) -> bool:
         number_of_decks = self.game_config['number_of_decks']
         for table in self.table_config['tables']:
+            shoe = ShoeRepository().retrieve_shoe_model(table['name'])
+            if shoe:
+                continue
+            
             shoe = ShoeRepository().create_shoe_model(
                 table['name'],
                 number_of_decks,

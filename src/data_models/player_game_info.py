@@ -3,6 +3,15 @@ from data_models.bet_option import BetOption, BetOptions
 
 
 class PlayerGameInfo:
+    @classmethod
+    def generate_default_ins(cls, player_id: str) -> 'PlayerGameInfo':
+        return cls({
+            'player_id': player_id,
+            'first_two_cards': [],
+            'hit_cards': [],
+            'is_stand': False
+        })
+    
     def __init__(self, data: dict) -> None:
         self.player_id = data['player_id']
         self.first_two_cards = Cards(data['first_two_cards']) if data.get('first_two_cards') else Cards([])

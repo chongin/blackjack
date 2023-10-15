@@ -77,4 +77,10 @@ class StateMachineException(SystemException):
 class DataInvalidException(SystemException):
     def __init__(self,  err_message):
         super().__init__(400, err_message)
+
+
+class InternalLogicException(SystemException):
+    def __init__(self,  err_message):
+        super().__init__(400, err_message)
+
 # Backend exception ended.
