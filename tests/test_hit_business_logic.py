@@ -15,7 +15,7 @@ from job_system.jobs.notify_job import *
 from business_logic.hit_business_logic import HitBusinessLogic
 
 
-def atest_player_can_hit_card():
+def test_player_can_hit_card():
     mock_obj = MockShareObj('player_can_hit_card_data')
     mock_obj.save_to_firebase() # save to database first
     shoe = mock_obj.shoe
@@ -30,6 +30,8 @@ def atest_player_can_hit_card():
     player_game_info = current_round.find_player_game_info_by_player_id(player.player_id)
     assert player_game_info.is_stand == False, "Player should be hit more card"
     assert len(player_game_info.hit_cards) == 1, "Player should have one hit card"
+    assert len(current_round.hit_card_sequences) == 2, "Player hit card should have 2"
+
    
 def test_player_cannot_hit_card():
     mock_obj = MockShareObj('player_cannot_hit_card_data')

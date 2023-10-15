@@ -14,6 +14,9 @@ class HitCardRule:
 
         return is_not_standing and has_two_cards and is_not_bust
 
+    def check_player_can_stand(self):
+        return self.check_player_can_hit()
+    
     def check_banker_can_hit(self):
         base_check = self.check_player_can_hit()
         if not base_check:

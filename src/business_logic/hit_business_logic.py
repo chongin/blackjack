@@ -20,6 +20,10 @@ class HitBusinessLogic:
     def handle_hit(self, shoe_name: str, player_name: str, round_id: str) -> dict:
         self._do_validation(shoe_name, player_name, round_id)
         self._process()
+
+        self._broadcast_hit_message_to_other_clients()
+
+        #  if can hit more, just need to wait this player do operation.
         if not self.context['can_hit_more']:
             self._create_job_to_notify_next_player_or_banker_to_hit_or_stand()
         return self._compose_result()
@@ -113,7 +117,7 @@ class HitBusinessLogic:
         player_profile = self.context['player_profile']
         current_round = self.context['current_round']
 
-        message = {'action': 'notify_player_bet_options'}
+        message = {'action': 'notify_player_hit'}
         message.update(current_round.notify_info())
         message.update({
             'player_id': player_profile.player_id,
