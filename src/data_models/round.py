@@ -152,7 +152,7 @@ class Round:
         return all_bet_player_ids
 
     def get_all_player_info_have_betted(self) -> PlayerGameInfos:
-        all_player_infos = PlayerGameInfos()
+        all_player_infos = PlayerGameInfos([])
         for player_game_info in self.player_game_infos:
             if player_game_info.bet_options:
                 all_player_infos.append(player_game_info)

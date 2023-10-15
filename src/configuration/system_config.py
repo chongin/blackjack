@@ -59,16 +59,16 @@ class SystemConfig:
             ShoeRepository().save_shoe(shoe)
 
     def base_win_option_name(self):
-        return self.game_config['bet_option_names']['base_win']
+        return self.game_config['bet_option_names'][0]
 
     def pair_option_name(self):
-        return self.game_config['bet_option_names']['pair']
+        return self.game_config['bet_option_names'][1]
 
     def insurence_option_name(self):
-        return self.game_config['bet_option_names']['insurence']
+        return self.game_config['bet_option_names'][2]
 
     def double_down(self):
-        return self.game_config['bet_option_names']['double_down']
+        return self.game_config['bet_option_names'][3]
 
     def get_odd_by_option_name(self, option_name: str):
         return self.game_config['odds'][option_name]

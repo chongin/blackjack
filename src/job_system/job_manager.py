@@ -38,7 +38,7 @@ class JobManager:
         return self._add_job('NotifyResultedJob', job_data)
     
     def add_notify_closed_job(self, job_data: dict) -> bool:
-        return self._add_job('NotifyClosedEndedJob', job_data)
+        return self._add_job('NotifyClosedJob', job_data)
 
     def add_notify_nex_round_opened_job(self, job_data: dict) -> bool:
         return self._add_job('NotifyNextRoundOpenedJob', job_data)
@@ -55,8 +55,8 @@ class JobManager:
             job = NotifyDealEndedJob(job_data)
         elif job_name == 'NotifyResultedJob':
             job = NotifyResultedJob(job_data)
-        elif job_name == 'NotifyClosedEndedJob':
-            job = NotifyClosedEndedJob(job_data)
+        elif job_name == 'NotifyClosedJob':
+            job = NotifyClosedJob(job_data)
         elif job_name == 'NotifyNextRoundOpenedJob':
             job = NotifyNextRoundOpened(job_data)
         else:

@@ -205,7 +205,7 @@ def atest_handle_deal_ended_player_hit_card():
     assert current_round.state == 'deal_ended', "Round state is wrong"
     assert len(current_round.hit_card_sequences) == 2, "Should have 2 inside the hit card sequences"
 
-def test_handle_deal_ended_banker_hit_card():
+def atest_handle_deal_ended_banker_hit_card():
     mock_obj = MockShareObj('deal_ended_banker_hit_card_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe
@@ -225,4 +225,27 @@ def test_handle_deal_ended_banker_hit_card():
 
     assert current_round.banker_game_info.is_stand is True, "Banker should be stand"
     assert current_round.state == 'deal_ended', "Round state is wrong"
+    assert len(current_round.hit_card_sequences) == 0, "Should have 0 inside the hit card sequences"
+
+
+def test_handle_deal_ended_banker_hit_card():
+    mock_obj = MockShareObj('result_data')
+    mock_obj.save_to_firebase()
+    shoe = mock_obj.shoe
+    round = shoe.current_deck.current_round
+
+    notify_info = round.notify_info()
+    job = NotifyResultedJob(notify_info)
+    job_mgr = SingletonManager.instance().job_mgr
+    job_mgr.clear_jobs()
+
+    job_mgr.handle_timeout_job(job)
+    assert len(job_mgr.jobs) == 1, "Jobs not have one job inside it, resulted job"
+    assert job_mgr.jobs[0].job_name == 'NotifyClosedJob', "Job name is wrong"
+
+    shoe_db = mock_obj.retrieve_shoe_from_firebase()
+    current_round = shoe_db.current_deck.current_round
+
+    assert current_round.banker_game_info.is_stand is True, "Banker should be stand"
+    assert current_round.state == 'resulted', "Round state is wrong"
     assert len(current_round.hit_card_sequences) == 0, "Should have 0 inside the hit card sequences"

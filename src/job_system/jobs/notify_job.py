@@ -34,7 +34,7 @@ class NotifyResultedJob(JobBase):
         super().__init__(data)
 
 
-class NotifyClosedEndedJob(JobBase):
+class NotifyClosedJob(JobBase):
     def __init__(self, data: dict) -> None:
         super().__init__(data)
 

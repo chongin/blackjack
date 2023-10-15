@@ -9,7 +9,7 @@ from business_logic.flow_control.flow_base import FlowBase
 from configuration.system_config import SystemConfig
 
 
-class ResultFlow(FlowBase):
+class ResultedFlow(FlowBase):
     def _do_self_validation(self) -> bool:
         current_round = self.context['current_round']
         if not current_round.is_deal_ended():
@@ -17,24 +17,27 @@ class ResultFlow(FlowBase):
             return False
         
         if len(current_round.hit_card_sequences) != 0:
-            Logger.error("There is still have at least one player can do action, cannot calculate result now..")
+            Logger.error("There is still have at least one player can do action, cannot calculate result now.")
+            return False
+        
+        if not current_round.banker_game_info.is_stand:
+            Logger.error("Banker is not stand, should wait for banker do action. .")
             return False
         
         return True
     
     def _process(self) -> bool:
         current_round = self.context['current_round']
-        banker_game_info = current_round.banker_game_info
         player_game_infos = current_round.get_all_player_info_have_betted()
         self.context['betted_player_game_infos'] = player_game_infos
         for player_game_info in player_game_infos:
-            self._calculate_player_result(player_game_info, banker_game_info)
+            self._calculate_player_result(player_game_info)
         
         self.update_round_stauts()
         self._save_data()
         return True
 
-    def _after_close(self) -> bool:
+    def _after_process(self) -> bool:
         self.broadcast_message_one_by_one()
         self._create_close_job()
         return True
@@ -45,7 +48,7 @@ class ResultFlow(FlowBase):
         total_win_amt = 0
         for bet_option in player_game_info.bet_options:
             self._calculate_bet_option(
-                player_game_info, banker_game_info,
+                player_game_info,
                 player_game_info.total_point(),
                 banker_game_info.total_point(),
                 bet_option,
