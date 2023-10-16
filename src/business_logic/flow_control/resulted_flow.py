@@ -70,19 +70,38 @@ class ResultedFlow(FlowBase):
                               banker_total_point: int, bet_option: BetOption) -> None: 
         odds = SystemConfig.instance().get_odd_by_option_name(bet_option.option_name)
         if bet_option.option_name == SystemConfig.instance().base_win_option_name():
-            if player_total_point > banker_total_point:
-                bet_option.result = 'win'
+            if player_total_point > 21:
+                if banker_total_point <= 21:
+                    bet_option.result = 'lost'
+                    bet_option.win_amt = 0
+                else:
+                    bet_option.result = 'draw'
+                    bet_option.win_amt = (bet_option.bet_amt * odds) / 2
+            elif player_total_point == 21:
                 if player_game_info.is_blackjack():
                     blackjack_odds = SystemConfig.instance().get_blackjack_odds
+                    bet_option.result = 'win'
                     bet_option.win_amt = bet_option.bet_amt * blackjack_odds
+                elif banker_total_point == 21:
+                    bet_option.result = 'draw'
+                    bet_option.win_amt = (bet_option.bet_amt * odds) / 2
                 else:
+                    bet_option.result = 'win'
                     bet_option.win_amt = bet_option.bet_amt * odds
-            elif player_total_point == banker_total_point:
-                bet_option.result = 'draw'
-                bet_option.win_amt = (bet_option.bet_amt * odds) / 2
             else:
-                bet_option.result = 'lost'  # TD should cacluate insurrence here
-                bet_option.win_amt = 0
+                if banker_total_point > 21:
+                    bet_option.result = 'win'
+                    bet_option.win_amt = bet_option.bet_amt * odds
+                elif player_total_point < banker_total_point:
+                    bet_option.result = 'lost'
+                    bet_option.win_amt = 0
+                elif player_total_point == banker_total_point:
+                    bet_option.result = 'draw'
+                    bet_option.win_amt = (bet_option.bet_amt * odds) / 2
+                else:
+                    bet_option.result = 'win'
+                    bet_option.win_amt = bet_option.bet_amt * odds
+
         elif bet_option.option_name == SystemConfig.instance().pair_option_name():
             first_card_value = player_game_info.first_two_cards[0].value
             second_card_value = player_game_info.first_two_cards[1].value
