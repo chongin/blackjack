@@ -77,9 +77,14 @@ class DealEndedFlow(FlowBase):
         current_player_game_info = self.context['current_player_game_info']
         is_hit_by_player = self.context['is_hit_by_player']
         if is_hit_by_player:
-            return HitCardRule(current_player_game_info).check_player_can_hit()
+            if not HitCardRule(current_player_game_info).check_player_can_hit():
+                Logger.error(f"This player cannot hit card, {current_player_game_info.player_id}")
+                return False
         else:
-            return HitCardRule(current_player_game_info).check_banker_can_hit()
+            if not HitCardRule(current_player_game_info).check_banker_can_hit():
+                Logger.error(f"The banker cannot hit card, {current_player_game_info.player_id}")
+                return False
+        return True
 
     def _notify_player_to_hit_card(self) -> None:
         current_round = self.context['current_round']
@@ -107,7 +112,7 @@ class DealEndedFlow(FlowBase):
     def _popup_one_player_id_from_hit_cards(self):
         current_round = self.context['current_round']
         pop_player_id = current_round.hit_card_sequences.pop(0)
-        Logger.debug("Pop up player_id from hit card sequence", pop_player_id)
+        Logger.debug("Pop up player_id from hit card sequence", pop_player_id, current_round.hit_card_sequences)
 
     def _draw_one_card_from_server(self) -> bool:
         current_round = self.context['current_round']

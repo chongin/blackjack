@@ -14,7 +14,7 @@ from utils.util import Util
 from job_system.jobs.notify_job import *
 
 
-def atest_add_jobs():
+def test_add_jobs():
     mock_obj = MockShareObj('bet_started_data')
     shoe = mock_obj.shoe
     round = shoe.current_deck.current_round
@@ -42,7 +42,7 @@ def atest_add_jobs():
     assert type(job) is NotifyDealEndedJob, "CreateJobe type error"
 
 
-def atest_retrive_timeout_jobs():
+def test_retrive_timeout_jobs():
     mock_obj = MockShareObj('bet_started_data')
     shoe = mock_obj.shoe
     round = shoe.current_deck.current_round
@@ -65,7 +65,7 @@ def atest_retrive_timeout_jobs():
     jobs = job_mgr.retrieve_timeout_jobs()
     assert len(jobs) == 0, "Job Should not timeout"
 
-def atest_handle_bet_started_timeout_job():
+def test_handle_bet_started_timeout_job():
     mock_obj = MockShareObj('bet_started_data')
     mock_obj.save_to_firebase() # save to database first
     shoe = mock_obj.shoe
@@ -81,7 +81,7 @@ def atest_handle_bet_started_timeout_job():
     assert job_mgr.jobs[0].job_name == 'NotifyBetEndedJob', "Job name is wrong"
     print(job_mgr.jobs[0].to_dict())
 
-def atest_handle_bet_ended_timeout_job():
+def test_handle_bet_ended_timeout_job():
     mock_obj = MockShareObj('bet_ended_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe
@@ -97,7 +97,7 @@ def atest_handle_bet_ended_timeout_job():
     assert job_mgr.jobs[0].job_name == 'NotifyDealStartedJob', "Job name is wrong"
     print(job_mgr.jobs[0].to_dict())
 
-def atest_handle_deal_started_timeout_job_for_player_first_card():
+def test_handle_deal_started_timeout_job_for_player_first_card():
     mock_obj = MockShareObj('deal_started_player_first_card_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe
@@ -119,7 +119,7 @@ def atest_handle_deal_started_timeout_job_for_player_first_card():
     assert len(current_round.player_game_infos[0].first_two_cards) == 1, "Should draw one card to player"
     assert len(current_round.deal_card_sequences) == 3, "Should pop up player id"
 
-def atest_handle_deal_started_timeout_job_for_banker_first_card():
+def test_handle_deal_started_timeout_job_for_banker_first_card():
     mock_obj = MockShareObj('deal_started_banker_first_card_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe
@@ -141,7 +141,7 @@ def atest_handle_deal_started_timeout_job_for_banker_first_card():
     assert len(current_round.banker_game_info.first_two_cards) == 1, "Should draw one card to banker"
     assert len(current_round.deal_card_sequences) == 2, "Should pop up banker id"
 
-def atest_handle_deal_started_timeout_job_for_player_second_card():
+def test_handle_deal_started_timeout_job_for_player_second_card():
     mock_obj = MockShareObj('deal_started_player_second_card_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe
@@ -163,7 +163,7 @@ def atest_handle_deal_started_timeout_job_for_player_second_card():
     assert len(current_round.player_game_infos[0].first_two_cards) == 2, "Should draw one card to player"
     assert len(current_round.deal_card_sequences) == 1, "Should pop up player id"
 
-def atest_handle_deal_started_timeout_job_for_banker_second_card():
+def test_handle_deal_started_timeout_job_for_banker_second_card():
     mock_obj = MockShareObj('deal_started_banker_second_card_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe
@@ -185,7 +185,7 @@ def atest_handle_deal_started_timeout_job_for_banker_second_card():
     assert len(current_round.banker_game_info.first_two_cards) == 2, "Should draw one card to banker"
     assert len(current_round.deal_card_sequences) == 0, "Should pop up banker id"
 
-def atest_handle_deal_ended_player_hit_card():
+def test_handle_deal_ended_player_hit_card():
     mock_obj = MockShareObj('deal_ended_player_hit_card_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe
@@ -205,7 +205,7 @@ def atest_handle_deal_ended_player_hit_card():
     assert current_round.state == 'deal_ended', "Round state is wrong"
     assert len(current_round.hit_card_sequences) == 2, "Should have 2 inside the hit card sequences"
 
-def atest_handle_deal_ended_banker_hit_card():
+def test_handle_deal_ended_banker_hit_card():
     mock_obj = MockShareObj('deal_ended_banker_hit_card_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe
@@ -228,7 +228,7 @@ def atest_handle_deal_ended_banker_hit_card():
     assert len(current_round.hit_card_sequences) == 0, "Should have 0 inside the hit card sequences"
 
 
-def atest_handle_deal_ended_banker_hit_card():
+def test_handle_deal_ended_banker_hit_card():
     mock_obj = MockShareObj('result_data')
     mock_obj.save_to_firebase()
     shoe = mock_obj.shoe

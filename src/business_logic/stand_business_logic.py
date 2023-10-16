@@ -45,6 +45,11 @@ class StandBusinessLogic:
         if not player_game_info:
             raise DataInvalidException(f"Cannot find this player in the player game info list. player_id: {player_profile.player_id}.")
         
+        #  validate is this player can hit on this turn or not
+        hit_card_sequences = current_round.hit_card_sequences
+        if not hit_card_sequences or hit_card_sequences[0] != player_profile.player_id:
+            raise ActionNotAllowedException(f"Base on play game sequence. It is not the turn for this player to hit. player_id: {player_profile.player_id}")
+        
         #  validate can stand or not
         if not HitCardRule(player_game_info).check_player_can_stand():
             raise ActionNotAllowedException(f"Base on game rule, this player cannot allow to hit now. player_id: {player_profile.player_id}")
@@ -68,7 +73,7 @@ class StandBusinessLogic:
     def _popup_one_player_id_from_hit_cards(self):
         current_round = self.context['current_round']
         pop_player_id = current_round.hit_card_sequences.pop(0)
-        Logger.debug("Pop up player_id from hit card sequence", pop_player_id)
+        Logger.debug("Pop up player_id from hit card sequence", pop_player_id, current_round.hit_card_sequences)
 
     def _save_data(self):
         current_round = self.context['current_round']

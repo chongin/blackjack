@@ -21,7 +21,8 @@ class PlayerProfile:
     @classmethod
     def new_model(cls, player_name: str) -> 'PlayerProfile':
         player_profile_hash = {
-            'player_id': str(ULID()),
+            #'player_id': str(ULID()),
+            'player_id': player_name,
             'player_name': player_name,
             'state': 'active',
             'wallet': {

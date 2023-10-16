@@ -6,7 +6,7 @@
     "currency": "CAD",
     "job_timeouts_in_millisec": {
         "NotifyBetStartedJob": 500,
-        "NotifyBetEndedJob": 3000,
+        "NotifyBetEndedJob": 5000,
         "NotifyDealStartedJob": 500,
         "NotifyDealEndedJob": 500,
         "NotifyResultedJob": 500,

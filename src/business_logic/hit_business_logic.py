@@ -127,7 +127,7 @@ class HitBusinessLogic:
     def _popup_one_player_id_from_hit_cards(self):
         current_round = self.context['current_round']
         pop_player_id = current_round.hit_card_sequences.pop(0)
-        Logger.debug("Pop up player_id from hit card sequence", pop_player_id)
+        Logger.debug("Pop up player_id from hit card sequence", pop_player_id, current_round.hit_card_sequences)
 
     def _save_data(self):
         current_round = self.context['current_round']
