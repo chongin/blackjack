@@ -3,6 +3,7 @@ from singleton_manger import SingletonManager
 from utils.util import Util
 from business_logic.flow_control.flow_base import FlowBase
 from data_models.round import Round
+from data_models.player_game_info import PlayerGameInfo
 from business_logic.repositories.round_histories_respository import RoundHistoriesRepository
 
 class ClosedFlow(FlowBase):    
@@ -17,6 +18,11 @@ class ClosedFlow(FlowBase):
         self._update_round_state_to_closed()
         self._save_round_to_history()
         self._generate_next_round()
+
+        # this is not the good idea,
+        # should create a table player relationship mapping table
+        self.copy_player_info_to_this_round()
+
         self._save_data()
         return True
     
@@ -34,6 +40,14 @@ class ClosedFlow(FlowBase):
         self.context['current_round'] = next_round
         current_deck.current_round = next_round
         next_round.set_parent(current_deck)
+
+    def copy_player_info_to_this_round(self) -> None:
+        prev_round = self.context['prev_round']
+        current_round = self.context['current_round']
+        for player_info in prev_round.player_game_infos:
+            new_player_game_info = PlayerGameInfo.generate_default_ins(player_info.player_id)
+            current_round.player_game_infos.append(new_player_game_info)
+        Logger.debug(f"Copy player info to the new round. count: {len(prev_round.player_game_infos)}")
 
     def _save_round_to_history(self) -> None:
         current_round = self.context['current_round']

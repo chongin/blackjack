@@ -38,13 +38,21 @@ class QueryGameBusinessLogic:
         self.context['player_profile'] = player_profile
 
     def _process(self) -> None:
-        if not self.context.get('new_player'):
-            return
-            
-        self._handle_new_player_query_game()
-        self._save_data()
+        if self.context.get('new_player'):
+            self._add_player_game_info()
+            self._save_data()
+        else:
+            if not self._check_exist_in_player_game_info():
+                self._add_player_game_info()
+                self._save_data()
 
-    def _handle_new_player_query_game(self):
+    def _check_exist_in_player_game_info(self) -> bool:
+        current_round = self.context['current_round']
+        player_profile = self.context['player_profile']
+        player_game_info = current_round.find_player_game_info_by_player_id(player_profile.player_id)
+        return player_game_info is not None 
+
+    def _add_player_game_info(self):
         current_round = self.context['current_round']
         player_profile = self.context['player_profile']
 

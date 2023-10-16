@@ -8,7 +8,7 @@ from api_clients.authorization_api_client import AuthorizationApiClient
 from api_clients.wallet_api_client import WalletApiClient
 from exceptions.system_exception import *
 from singleton_manger import SingletonManager
-from data_models.player_game_info import BankerGameInfo
+from logger import Logger
 
 
 class BetBusinessLogic:
@@ -54,9 +54,6 @@ class BetBusinessLogic:
         if total_bet_amt > player_profile.wallet.balance:
             raise OverBalanceLimitException(f"You balance is {player_profile.wallet.balance} is less than your total bet, cannot bet.")
         
-        player_game_info = current_round.find_player_game_info_by_player_id(player_profile.player_id)
-        if not player_game_info:
-            raise DataInvalidException(f"Cannot find this player in the player game info list. player_id: {player_profile.player_id}.")
         # later also need to validate the bet_options, because some bet_options has conditions, for example pair
         # validate_bet_options
 
@@ -65,15 +62,35 @@ class BetBusinessLogic:
             'player_profile': player_profile,
             'current_round': current_round,
             'total_bet_amt': total_bet_amt,
-            'player_game_info': player_game_info
         })
         
     def _process(self) -> None:
+        if not self._check_exist_in_player_game_info():  # when turn new round the player not exist
+            self._add_player_game_info()
+
         self._add_bet_options_to_player_game_info()
         self._calculate_player_balance()
         self._update_round_status_to_bet_started()
         self._save_data()
-        
+    
+    def _check_exist_in_player_game_info(self) -> bool:
+        current_round = self.context['current_round']
+        player_profile = self.context['player_profile']
+        player_game_info = current_round.find_player_game_info_by_player_id(player_profile.player_id)
+        if player_game_info:
+            self.context['player_game_info'] = player_game_info
+            return True
+        return False
+
+    def _add_player_game_info(self):
+        current_round = self.context['current_round']
+        player_profile = self.context['player_profile']
+
+        player_game_info = PlayerGameInfo.generate_default_ins(player_profile.player_id)
+        current_round.player_game_infos.append(player_game_info)
+        self.context['player_game_info'] = player_game_info
+        Logger.debug("Add a new player to player game info list", player_game_info.to_dict())
+
     def _add_bet_options_to_player_game_info(self) -> None:
         bet_options_req = self.context['bet_options_req']
         player_game_info = self.context['player_game_info']
