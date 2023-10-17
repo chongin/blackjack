@@ -54,6 +54,9 @@ class PlayerProfile:
 
     def increase_balance(self, amt):
         self.wallet.balance += amt
+    
+    def update_total_win_amt(self, amt):
+        self.wallet.total_win += amt
 
 
 class PlayerProfiles(list):

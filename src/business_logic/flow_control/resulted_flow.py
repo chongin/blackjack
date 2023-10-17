@@ -145,6 +145,7 @@ class ResultedFlow(FlowBase):
             return
         
         player_profile.increase_balance(player_game_info.total_win_amt)
+        player_profile.update_total_win_amt(player_game_info.total_win_amt - player_game_info.total_bet_amt)
         # call wallet api to increase balance
         WalletApiClient().deposit({
             'total_bet_amt': player_game_info.total_win_amt,
