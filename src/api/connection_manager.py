@@ -3,7 +3,7 @@ from logger import Logger
 from api.ws_messages.register_msg import RegisterMsg
 from logger import Logger
 from api.connections.ws_connection import WSConnection
-
+import asyncio
 
 class ConnectionManager:
     def __init__(self) -> None:
@@ -31,7 +31,8 @@ class ConnectionManager:
         Logger.debug("Begin to broadcase message")
         self.mutex.acquire()
         for _, connection in self.connections.items():
-            if not connection.send_message(data):
+            res = asyncio.run(connection.send_message(data))
+            if not res:
                 Logger.error(f"Broadcase message to player:{connection.player_id} failed.", data)
                 continue
 
@@ -49,7 +50,8 @@ class ConnectionManager:
             self.mutex.release()
             return False
         
-        if not connection.send_message(data):
+        res = asyncio.run(connection.send_message(data))
+        if not res:
             Logger.error(f"Send message to one player: {player_id} failed.", data)
             self.mutex.release()
             return False
@@ -65,7 +67,8 @@ class ConnectionManager:
             if player_id == exclude_player_id:
                 Logger.debug(f"Exclude this player:{exclude_player_id}, don't need to send message:", data)
                 continue
-            if not connection.send_message(data):
+            res = asyncio.run(connection.send_message(data))
+            if not res:
                 Logger.error(f"In [broadcase_messages_exclude_specifi_player] brocast to player:{player_id} failed.", data)
                 continue
         self.mutex.release()

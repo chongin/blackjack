@@ -10,9 +10,9 @@ class WSConnection:
         self.websocket = data['websocket']
         self.connected_at = data['connected_at']
 
-    def send_message(self, data: dict) -> bool:
+    async def send_message(self, data: dict) -> bool:
         try:
-            self.websocket.send(json.dumps(data))
+            await self.websocket.send(json.dumps(data))
             Logger.debug(f"Send message to player: {self.player_id} success")
             return True
         # except websockets.exceptions.ConnectionClosedError as ex:
