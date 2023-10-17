@@ -7,6 +7,8 @@ from data_models.bet_option import BetOption
 from utils.util import Util
 from business_logic.flow_control.flow_base import FlowBase
 from configuration.system_config import SystemConfig
+from api_clients.wallet_api_client import WalletApiClient
+from business_logic.repositories.player_profile_respository import PlayerProfileRespository
 
 
 class ResultedFlow(FlowBase):
@@ -32,6 +34,7 @@ class ResultedFlow(FlowBase):
         self.context['betted_player_game_infos'] = player_game_infos
         for player_game_info in player_game_infos:
             self._calculate_player_result(player_game_info)
+            self.update_player_wallet(player_game_info)
         
         self.update_round_state_to_resulted()
         self._save_data()
@@ -133,3 +136,19 @@ class ResultedFlow(FlowBase):
     def _create_close_job(self):
         current_round = self.context['current_round']
         SingletonManager.instance().job_mgr.add_notify_closed_job(current_round.notify_info())
+
+    def update_player_wallet(self, player_game_info: PlayerGameInfo) -> None:
+        player_profile = PlayerProfileRespository().retrieve_player_profile_model(player_game_info.player_id)
+        if player_profile is None:
+            #  TBD
+            Logger.error(f"Cannot update player wallet, because cannot find this player: {player_game_info.player_id}")
+            return
+        
+        player_profile.increase_balance(player_game_info.total_win_amt)
+        # call wallet api to increase balance
+        WalletApiClient().deposit({
+            'total_bet_amt': player_game_info.total_win_amt,
+            'player_id': player_profile.player_id
+        })
+
+        PlayerProfileRespository().save_player(player_profile)
