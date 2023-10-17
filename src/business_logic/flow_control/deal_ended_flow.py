@@ -27,28 +27,36 @@ class DealEndedFlow(FlowBase):
         if not self._get_current_player_game_info():
             return False
         
-        if not self._check_can_hit():
-            return False
-        
-        self.update_round_state_to_deal_ended()
-        self.save_data()
-
-        if not self.context['is_hit_by_player']:
-            self._handle_banker_hit_card()
-            self._check_banker_can_hit_more()  # check need to update is_stand or not
+        if self.context['is_hit_by_player']:
+            self.update_round_state_to_deal_ended()
             self.save_data()
+        else:
+            self.update_round_state_to_deal_ended()
+
+            current_player_game_info = self.context['current_player_game_info']
+            if not HitCardRule(current_player_game_info).check_banker_can_hit():
+                self.context['is_banker_hitted'] = False
+                self.context['can_banker_hit_more'] = False
+                current_player_game_info.is_stand = True
+                self._popup_one_player_id_from_hit_cards()
+            else:
+                self.context['is_banker_hitted'] = True
+                self._handle_banker_hit_card()
+                self._check_banker_can_hit_more()  # check need to update is_stand or not
+
+            self.save_data()
+
         return True
 
     def _after_process(self) -> bool:
         if self.context['is_hit_by_player']:
             self._notify_player_to_hit_card()
         else:
-            self.broadcast_banker_hit_card_to_clients()
+            if self.context['is_banker_hitted']:
+                self.broadcast_banker_hit_card_to_clients()
 
-            current_player_game_info = self.context['current_player_game_info']
             current_round = self.context['current_round']
-            # check if banker can hit more card or not
-            if HitCardRule(current_player_game_info).check_banker_can_hit():
+            if self.context['can_banker_hit_more']:
                 SingletonManager.instance().job_mgr.add_notify_deal_ended_job(current_round.notify_info())
             else:
                 SingletonManager.instance().job_mgr.add_notify_resulted_job(current_round.notify_info())
@@ -71,20 +79,7 @@ class DealEndedFlow(FlowBase):
             self.context['current_player_game_info'] = current_round.banker_game_info
             self.context['is_hit_by_player'] = False
 
-        return True
-
-    def _check_can_hit(self) -> bool:
-        current_player_game_info = self.context['current_player_game_info']
-        is_hit_by_player = self.context['is_hit_by_player']
-        if is_hit_by_player:
-            if not HitCardRule(current_player_game_info).check_player_can_hit():
-                Logger.error(f"This player cannot hit card, {current_player_game_info.player_id}")
-                return False
-        else:
-            if not HitCardRule(current_player_game_info).check_banker_can_hit():
-                Logger.error(f"The banker cannot hit card, {current_player_game_info.player_id}")
-                return False
-        return True
+        return True        
 
     def _notify_player_to_hit_card(self) -> None:
         current_round = self.context['current_round']
@@ -92,9 +87,7 @@ class DealEndedFlow(FlowBase):
 
         message = {'action': 'notify_hit_stand'}
         message.update(current_round.notify_info())
-        message.update({
-            'player_id': current_player_game_info.player_id
-        })
+        message.update(current_player_game_info.to_dict())
         SingletonManager.instance().connection_mgr.send_message_to_one_player(message)
     
     def _handle_banker_hit_card(self) -> None:
@@ -108,6 +101,9 @@ class DealEndedFlow(FlowBase):
         if not HitCardRule(current_player_game_info).check_banker_can_hit():
             current_player_game_info.is_stand = True
             self._popup_one_player_id_from_hit_cards()
+            self.context['can_banker_hit_more'] = False
+        else:
+            self.context['can_banker_hit_more'] = True
 
     def _popup_one_player_id_from_hit_cards(self):
         current_round = self.context['current_round']

@@ -117,11 +117,10 @@ class HitBusinessLogic:
         player_profile = self.context['player_profile']
         current_round = self.context['current_round']
 
-        message = {'action': 'notify_player_hit'}
+        player_game_info = self.context['player_game_info']
+        message = {'action': 'notify_hit_stand'}
         message.update(current_round.notify_info())
-        message.update({
-            'player_id': player_profile.player_id,
-        })
+        message.update(player_game_info.to_dict())
         SingletonManager.instance().connection_mgr.broadcase_messages_exclude_specifi_player(message, player_profile.player_id)
 
     def _popup_one_player_id_from_hit_cards(self):
