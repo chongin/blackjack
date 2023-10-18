@@ -1,7 +1,5 @@
 from flask import Flask, request, jsonify
 from api.message_driver import MessageDriver
-app = Flask(__name__)
-
 
 
 class HttpServer:
