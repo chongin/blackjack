@@ -13,10 +13,10 @@ if __name__ == '__main__':
 
     # start web server to handle client request for client easily to handle timeout
     # or maybe later can accept other service api call.
-    http_server = HttpServer(host='localhost', port=8080)
+    http_server = HttpServer(host='0.0.0.0', port=8080)
     thread = threading.Thread(target=http_server.run)
     thread.start()
     # start the web server to handle cient connection for pushing message to client
-    websocket_server = WebSocketServer('127.0.0.1', 8000)
+    websocket_server = WebSocketServer('0.0.0.0', 8000)
     asyncio.run(websocket_server.run())
 
