@@ -122,13 +122,6 @@ pydev==0.0.1
 pygatt==4.0.5
 Pygments==2.14.0
 PyJWT==2.8.0
-pynput==1.7.6
-pyobjc-core==9.2
-pyobjc-framework-ApplicationServices==9.0.1
-pyobjc-framework-Cocoa==9.2
-pyobjc-framework-CoreBluetooth==9.2
-pyobjc-framework-libdispatch==9.2
-pyobjc-framework-Quartz==9.0.1
 pyparsing==3.0.9
 pyrsistent==0.19.3
 pyserial==3.5
