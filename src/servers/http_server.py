@@ -3,6 +3,7 @@ from api.message_driver import MessageDriver
 app = Flask(__name__)
 
 
+
 class HttpServer:
     def __init__(self, host, port) -> None:
         self.app = Flask(__name__)
@@ -11,6 +12,10 @@ class HttpServer:
         self.setup_routes()
 
     def setup_routes(self) -> None:
+        self.app.route('/', methods=["GET"])(
+            self.home
+        )
+
         self.app.route('/api/tables/<table_name>/query_game', methods=["GET"])(
             self.handle_query_game
         )
@@ -76,3 +81,6 @@ class HttpServer:
 
         response = MessageDriver(message_data).process_message()
         return jsonify(response)
+    
+    def home(self):
+        return "Blackjack appliocation"
