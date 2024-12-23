@@ -5,6 +5,7 @@ from configuration.system_config import SystemConfig
 import asyncio
 import threading
 
+# test
 if __name__ == '__main__':
     # start job manager to handle the game flow
     SingletonManager.instance().message_factory
